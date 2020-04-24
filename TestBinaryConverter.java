@@ -1,0 +1,76 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Scanner;
+
+public class TestBinaryConverter {
+
+	public static void main(String[] args) {
+
+		if (args.length == 2) {
+
+			File file = null;
+			int sequenceLength = 0;
+
+			sequenceLength = Integer.parseInt(args[0]);
+			file = new File(args[1]);
+
+			createBinaryBasic(sequenceLength, file);
+		}
+
+	}
+
+	
+	public static void createBinaryBasic(int sequenceLength, File file) {
+		Scanner fileScan = null;
+		try {
+			fileScan = new Scanner(file);
+		} catch (FileNotFoundException e1) {
+			System.err.println("ERROR");
+		}
+		boolean read = false;
+
+		StringBuilder str = new StringBuilder();
+		while (fileScan.hasNextLine()) {
+			String line = fileScan.nextLine();
+			line = line.toUpperCase();	
+			if(read) {
+				Scanner lineScan = new Scanner(line);
+				if(lineScan.hasNext() && lineScan.next().equals("//")) {
+					read = false;
+					int i = str.indexOf("N");
+					if(i != -1) {
+						str.delete(i, str.length());
+					}
+					for (int j = 0; j < str.length() - sequenceLength + 1; j++) {
+						String dna = str.substring(j, j + sequenceLength);
+						
+							dna = dna.replace("A", "00");
+							dna = dna.replace("T", "11");
+							dna = dna.replace("C", "01");
+							dna = dna.replace("G", "10");
+							
+							System.out.print(dna + " ");
+					}
+				} else {
+					while(lineScan.hasNext()) {
+						str.append(lineScan.next());
+					}
+				}
+				lineScan.close();
+			} else {
+				Scanner lineScan = new Scanner(line);
+				if(lineScan.hasNext() && lineScan.next().equals("ORIGIN")) {
+					read = true;
+				}
+				lineScan.close();
+			}
+		}
+		fileScan.close();
+	}
+	
+
+		
+	}
+
+
