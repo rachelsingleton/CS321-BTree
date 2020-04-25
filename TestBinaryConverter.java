@@ -20,9 +20,9 @@ public class TestBinaryConverter {
 
 	}
 
-	
 	public static void createBinaryBasic(int sequenceLength, File file) {
 		Scanner fileScan = null;
+		int z = 0;
 		try {
 			fileScan = new Scanner(file);
 		} catch (FileNotFoundException e1) {
@@ -38,25 +38,34 @@ public class TestBinaryConverter {
 				Scanner lineScan = new Scanner(line);
 				if(lineScan.hasNext() && lineScan.next().equals("//")) {
 					read = false;
-					int i = str.indexOf("N");
-					if(i != -1) {
-						str.delete(i, str.length());
-					}
-					for (int j = 0; j < str.length() - sequenceLength + 1; j++) {
-						String dna = str.substring(j, j + sequenceLength);
+
+						String currentSection = str.toString();
+						currentSection = currentSection.replace("N", "");
+
+					System.out.println(str.length() + " Section Length w/ n" );
+					
+					System.out.println(currentSection.length() + " Section Length w/o n");
+					System.out.println();
+					for (int j = 0; j < currentSection.length() - sequenceLength + 1; j++) {
+						String dna = currentSection.substring(j, j + sequenceLength);
 						
 							dna = dna.replace("A", "00");
 							dna = dna.replace("T", "11");
 							dna = dna.replace("C", "01");
 							dna = dna.replace("G", "10");
 							
-							System.out.print(dna + " ");
+							//z++;
+							//System.out.println(dna + " " + z);
+							
+							//long genesBinary = (dna);
 					}
+					str = new StringBuilder();
 				} else {
 					while(lineScan.hasNext()) {
 						str.append(lineScan.next());
 					}
 				}
+				
 				lineScan.close();
 			} else {
 				Scanner lineScan = new Scanner(line);
