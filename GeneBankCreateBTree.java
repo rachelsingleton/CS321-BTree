@@ -67,7 +67,7 @@ public class GeneBankCreateBTree {
 					usage();
 				}
 			}
-			createBTree(cache, degree, file, sequenceLength, cacheSize, debug);
+			createTree(cache, degree, file, sequenceLength, cacheSize, debug);
 		} catch (Exception e) {
 			e.printStackTrace();
 			usage();
@@ -81,7 +81,7 @@ public class GeneBankCreateBTree {
 				"Usage: java GeneBankCreateBTree <0/1(no/with Cache)> <degree> <gbk file> <sequence length>[<cache size>] [<debug level>]");
 	}
 
-	public static void createBTree(boolean cache, int degree, File file, int sequenceLength, int cacheSize, int debug) {
+	public static void createTree(boolean cache, int degree, File file, int sequenceLength, int cacheSize, int debug) {
 		try {
 			Scanner scanFile = new Scanner(file);
 		} catch (FileNotFoundException e) {
