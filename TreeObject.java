@@ -12,7 +12,7 @@ public class TreeObject {
      */
     public TreeObject(long substring)  {
         key = substring;
-        frequency = 0;
+        frequency = 1;
     }
 
     /*
