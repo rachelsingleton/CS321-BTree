@@ -28,6 +28,7 @@ public class BTree {
             e.printStackTrace();
         }
         fileWriter = new DataManagement();
+        createBTree();
     }
 
     /*

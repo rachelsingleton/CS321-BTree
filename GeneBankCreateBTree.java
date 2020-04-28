@@ -85,6 +85,14 @@ public class GeneBankCreateBTree {
 	public static void createTree(boolean cache, int degree, File file, int sequenceLength, int cacheSize, int debug) {
 		try {
 			Scanner scanFile = new Scanner(file);
+			//TODO:
+			// BTree btree = new BTree(degree, sequenceLength, file);
+			// DataManagement file = new DataManagement()
+			// File f = btree.getFile()
+			// file.write(f) -> maybe?
+			// all the TestBinaryConverter code lives here
+			//
+
 		} catch (FileNotFoundException e) {
 			System.out.println("ERROR");
 			e.printStackTrace();

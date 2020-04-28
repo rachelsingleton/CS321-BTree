@@ -8,7 +8,7 @@ public class TreeObject {
     // Constructor
     /*
     Takes in the key as a substring of type long (should be binary by this point)
-    Frequency always starts at 0
+    Frequency always starts at 1
      */
     public TreeObject(long substring)  {
         key = substring;
@@ -34,5 +34,14 @@ public class TreeObject {
      */
     public long getKey() {
         return key;
+    }
+
+    /*
+    TODO: Zach said he would do this!!!!
+    Printing string and frequency for dump file
+     */
+    public String toString() {
+
+        return null;
     }
 }

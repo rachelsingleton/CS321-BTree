@@ -30,6 +30,8 @@ public class TestBinaryConverter {
 		}
 		boolean read = false;
 
+		// BTree<Long> tree =
+		// tree = new Tree(t ,sequenceLength, gbkfileName);
 		StringBuilder str = new StringBuilder();
 		while (fileScan.hasNextLine()) {
 			String line = fileScan.nextLine();
@@ -57,7 +59,10 @@ public class TestBinaryConverter {
 							//z++;
 							//System.out.println(dna + " " + z);
 							
-							//long genesBinary = (dna);
+							//long genesBinary = parseLong(dna,2);
+							//TreeObject tree = new TreeObject(genesBinary);
+							//btree.insertKey(tree);
+
 					}
 					str = new StringBuilder();
 				} else {
