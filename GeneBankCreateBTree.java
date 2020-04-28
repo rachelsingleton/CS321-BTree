@@ -32,6 +32,7 @@ public class GeneBankCreateBTree {
 			}
 			
 			// Todo:Math for ideal degree
+			// TODO: check to make sure it isn't bigger than ideal degree
 			if (degree == 0) {
 				System.out.println("the ideal degree formula");
 			}
