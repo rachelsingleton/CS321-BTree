@@ -1,23 +1,28 @@
 import java.io.File;
 import java.io.IOException;
 
-public class BTree {
+public class BTree<T> {
     private BTreeNode root;
     private int treeDegree;
     private int seqLen;
     private int isRoot;
     private File btree;
+    private String gbkFileName;
     private DataManagement fileWriter;
+    
 
     /* Constructor
     Creates a BTree with only one node
     Set properties of that node to make it an empty root node
      */
-    public BTree(int degree, int sequenceLength, File file) {
-        treeDegree = degree;
-        seqLen = sequenceLength;
+    public BTree(int degree, int sequenceLength, String gbkFileName) {
+
+        fileWriter = new DataManagement();
+		this.treeDegree = degree;
+		this.seqLen = sequenceLength;
+		
         try {
-            btree = new File(file + ".btree.data." + seqLen + "." + treeDegree);
+            btree = new File(gbkFileName + ".btree.data." + seqLen + "." + treeDegree);
             if (btree.createNewFile()) {
                 System.out.println("The file " + btree + "was created successfully.");
             } else {
@@ -27,7 +32,9 @@ public class BTree {
             System.out.println("The file could not be created.");
             e.printStackTrace();
         }
-        fileWriter = new DataManagement();
+
+		this.gbkFileName = gbkFileName + ".btree.data." + seqLen + "." + treeDegree;
+
         createBTree();
     }
 
@@ -68,7 +75,8 @@ public class BTree {
     Inserts an object k into the BTree
     Calls upon other methods in this class - this just checks to see if we are full or not-full
      */
-    public void insertKey(TreeObject k) {
+    public void insertKey(Long data) {
+    	TreeObject newObject = new TreeObject(data);
         BTreeNode r = fileWriter.getRoot();
         if(r.numKeys() == (2*treeDegree)+1) {
             BTreeNode s = new BTreeNode();
@@ -77,9 +85,9 @@ public class BTree {
             r.setParent(s); //Sets the new root to be the parent of the old root
             s.setLeaf(); //Sets the leaf status of the new node
             splitChildNode(s, 1);
-            insertNonFull(s, k);
+            insertNonFull(s, newObject);
         } else {
-            insertNonFull(r,k);
+            insertNonFull(r,newObject);
         }
 
     }
@@ -145,5 +153,11 @@ public class BTree {
         fileWriter.writeNode(z);
         fileWriter.writeNode(x);
     }
+    
+    //Zach needs to do this
+//    private toString( ) {
+//    	
+//    }
+//    
 }
 
