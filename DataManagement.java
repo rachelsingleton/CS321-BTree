@@ -5,10 +5,11 @@ public class DataManagement {
     }
 
     /*
-
+	Physically writes the byte buffer array to the file
      */
     public void writeNode(BTreeNode node) {
-
+    	//byte[] bytes = write(node);
+    	//RandomAccess file stuff will write bytes to the actual file
     }
 
     /*
@@ -26,5 +27,14 @@ public class DataManagement {
     public BTreeNode readNode(int val) {
 
         return null;
+    }
+    
+    /*
+     * Turns the BTreeNode into a byte buffer array
+     */
+    public void write() {
+    	//write all the stuff to a byte[]
+    	// write(BTreeNode)
+    	// writeBoolean(), writeInt(), etc...
     }
 }

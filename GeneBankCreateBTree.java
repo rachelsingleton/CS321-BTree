@@ -84,21 +84,86 @@ public class GeneBankCreateBTree {
 
 	public static void createTree(boolean cache, int degree, File file, int sequenceLength, int cacheSize, int debug) {
 		try {
-			Scanner scanFile = new Scanner(file);
-			//TODO:
-			// BTree btree = new BTree(degree, sequenceLength, file);
-			// DataManagement file = new DataManagement()
-			// File f = btree.getFile()
-			// file.write(f) -> maybe?
-			// all the TestBinaryConverter code lives here
-			//
+					Scanner scanFile = new Scanner(file);
+					//TODO:
+					// BTree btree = new BTree(degree, sequenceLength, file);
+					// DataManagement file = new DataManagement()
+					// File f = btree.getFile()
+					// file.write(f) -> maybe?
+					// all the TestBinaryConverter code lives here
+					
+					Scanner fileScan = null;
+					//int z = 0;
+					try {
+						fileScan = new Scanner(file);
+					} catch (FileNotFoundException e1) {
+						System.err.println("ERROR");
+					}
+					boolean read = false;
 
-		} catch (FileNotFoundException e) {
-			System.out.println("ERROR");
-			e.printStackTrace();
-		}
-		
-		
+					BTree<Long> tree = null;
+					tree = new BTree<Long>(degree ,sequenceLength, file.getName());
+					
+					
+					StringBuilder str = new StringBuilder();
+					while (fileScan.hasNextLine()) {
+						String line = fileScan.nextLine();
+						line = line.toUpperCase();	
+						if(read) {
+							Scanner lineScan = new Scanner(line);
+							if(lineScan.hasNext() && lineScan.next().equals("//")) {
+								read = false;
+
+									String currentSection = str.toString();
+									currentSection = currentSection.replace("N", "");
+
+//								System.out.println(str.length() + " Section Length w/ n" );
+//								System.out.println(currentSection.length() + " Section Length w/o n");
+//								System.out.println();
+								
+								for (int j = 0; j < currentSection.length() - sequenceLength + 1; j++) {
+									String dna = currentSection.substring(j, j + sequenceLength);
+									
+										dna = dna.replace("A", "00");
+										dna = dna.replace("T", "11");
+										dna = dna.replace("C", "01");
+										dna = dna.replace("G", "10");
+										
+										//z++;
+										//System.out.println(dna + " " + z);
+										
+										long genesBinary = Long.parseLong(dna,2);
+										//TreeObject tree = new TreeObject(genesBinary);
+										tree.insertKey(genesBinary);
+
+								}
+								str = new StringBuilder();
+							} else {
+								while(lineScan.hasNext()) {
+									str.append(lineScan.next());
+								}
+							}
+							
+							lineScan.close();
+						} else {
+							Scanner lineScan = new Scanner(line);
+							if(lineScan.hasNext() && lineScan.next().equals("ORIGIN")) {
+								read = true;
+							}
+							lineScan.close();
+						}
+					}
+					fileScan.close();
+				
+
+				} catch (FileNotFoundException e) {
+					System.out.println("ERROR");
+					e.printStackTrace();
+				}
+				
+				
+			}
+
 	}
 
-}
+
