@@ -8,7 +8,8 @@ public class BTreeNode {
     private ArrayList<TreeObject> node;
     private int parentloc;
     private ArrayList<Integer> children;
-    private int location;
+    private int location; // Node's location in binary file
+    DataManagement filewriter = new DataManagement();
 
     /*
     Constructor
@@ -20,8 +21,9 @@ public class BTreeNode {
         children = new ArrayList<Integer>();
         numKeys = 0;
         root = 1; //means false
-        numChildren = 0; //TODO Should be true since we always create the leaf node? have to check this logic
+        numChildren = 0;
         location = allocateSpace();
+        isLeaf = false;
     }
 
     /*
@@ -34,14 +36,6 @@ public class BTreeNode {
     }
 
     /*
-    Adds a TreeObject into the node
-     */
-    //TODO not sure if this method is needed or not
-    public void addObject() {
-
-    }
-
-    /*
     Returns the list of child pointers for the node
      */
     public ArrayList getChildren() {
@@ -49,20 +43,21 @@ public class BTreeNode {
     }
 
     /*
-    Returns a specified child from the node (returns the actual node)
+    Returns a specified child from the node (returns the actual node, not location in file)
     Put in child number you want but since we are indexing, we have to subtract 1
     Ex: Child 1 is at index 0 in the list
      */
     public BTreeNode getChild(int index) {
         int val = children.get(index-1);
-        DataManagement filewriter = new DataManagement();
-        return filewriter.readNode(val); //TODO: this logic is not my favorite and I don't know if it's right
+        return filewriter.readNode(val);
     }
 
     /*
     Sets the specified child to the location of the specified node
     Ex: want to set child 2 to be node r so setChild(2,r)
     Always increases the number of children since add method does the shifting
+    first line: gets the int location of the node in the file since the array stores pointers, not nodes
+    Does index conversion in the method
      */
     public void setChild(int index, BTreeNode r) {
         int loc = getLocation(r);
@@ -70,11 +65,17 @@ public class BTreeNode {
         numChildren++;
     }
 
+    /*
+    Sets the parent of a node to the location of the specified node
+     */
     public void setParent(BTreeNode r) {
         int loc = getLocation(r);
         parentloc = loc;
     }
 
+    /*
+    Returns the location of the parent node
+     */
     public int getParent() {
         return parentloc;
     }
@@ -83,6 +84,7 @@ public class BTreeNode {
     public int getLocation(BTreeNode node) {
         return 0;
     }
+
     /*
     Returns whether the node is the root or not
      */
@@ -147,16 +149,25 @@ public class BTreeNode {
      */
     public long getKey(int i) {
         TreeObject temp = node.get(i);
-        long substring = temp.getKey();
+        long substring = temp.getString();
         return substring;
     }
 
+    /*
+    Returns the specified TreeObject from the node
+    Index has already been converted so no need to subtract
+     */
     public TreeObject getObject(int i) {
         return node.get(i);
     }
 
-    //TODO: sets the specified index to a specified TreeObject
+    /*
+    Passing in the index, not the object number
+    Ex: setting index 0 to object1 is setObject(0,object1)
+    Taking the place of an add method
+     */
     public void setObject(int i, TreeObject object) {
-
+        node.add(i,object);
+        numKeys++;
     }
 }

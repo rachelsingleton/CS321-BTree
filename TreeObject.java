@@ -32,7 +32,7 @@ public class TreeObject {
     /*
     Returns the key (aka gene substring)
      */
-    public long getKey() {
+    public long getString() {
         return key;
     }
 
