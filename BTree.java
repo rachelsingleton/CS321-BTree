@@ -80,7 +80,7 @@ public class BTree<T> {
     public void insertKey(Long data) {
     	TreeObject newObject = new TreeObject(data);
         BTreeNode r = fileWriter.getRoot(); //Needs to return a BTreeNode, not an int
-        if(r.numKeys() == (2*treeDegree)+1) {
+        if(r.numKeys() == (2*treeDegree)-1) {
             BTreeNode s = new BTreeNode();
             s.setRoot(0); // New root
             s.setChild(1,r); //Sets the root to be the new child (at index 0)
