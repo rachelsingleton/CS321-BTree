@@ -24,7 +24,7 @@ public class BTree<T> {
         try {
             btree = new File(gbkFileName + ".btree.data." + seqLen + "." + treeDegree);
             if (btree.createNewFile()) {
-                System.out.println("The file " + btree + "was created successfully.");
+                System.out.println("The file " + btree + " was created successfully.");
             } else {
                 //TODO do we need to worry about overwriting a file if we run the simulation again?
             }

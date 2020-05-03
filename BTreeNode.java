@@ -9,7 +9,6 @@ public class BTreeNode {
     private int parentloc;
     private ArrayList<Integer> children;
     private int location; // Node's location in binary file
-    DataManagement filewriter = new DataManagement();
 
     /*
     Constructor
@@ -49,6 +48,7 @@ public class BTreeNode {
      */
     public BTreeNode getChild(int index) {
         int val = children.get(index-1);
+        DataManagement filewriter = new DataManagement();
         return filewriter.readNode(val);
     }
 
