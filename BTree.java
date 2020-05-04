@@ -7,13 +7,17 @@ public class BTree<T> {
     private int seqLen;
     private int isRoot;
     private File btree;
+    private File btreeMetaData;
     private String binaryFile;
     private DataManagement fileWriter;
+    private int numNodes;
     
 
     /* Constructor
     Creates a BTree with only one node
     Set properties of that node to make it an empty root node
+    Calls createBTree
+    Creates the binary file and the metadata file
      */
     public BTree(int degree, int sequenceLength, String gbkFileName) {
 
@@ -21,17 +25,34 @@ public class BTree<T> {
 		this.treeDegree = degree;
 		this.seqLen = sequenceLength;
 		
-		//create separate metadata file
-		
+		//Creates a file for storing the metadata of the BTree class
+        try {
+            btreeMetaData = new File(gbkFileName + ".btree.metadata." + seqLen + "." + treeDegree);
+            if (btree.createNewFile()) {
+                System.out.println("The file " + btreeMetaData + " was created successfully.");
+            } else if (btree.delete()){
+                System.out.println("The file " + btreeMetaData + " was not able to be deleted.");
+            } else {
+                System.out.println("The file " + btreeMetaData + " could not be created or deleted. Something is wrong.");
+            }
+        } catch (IOException e) {
+            System.out.println("The metadata file could not be created.");
+            e.printStackTrace();
+        }
+
+
+        // Creates the binary data file that all the node information is stored in
         try {
             btree = new File(gbkFileName + ".btree.data." + seqLen + "." + treeDegree);
             if (btree.createNewFile()) {
-                System.out.println("The file " + btree + "was created successfully.");
+                System.out.println("The file " + btree + " was created successfully.");
+            } else if (btree.delete()){
+                System.out.println("The file " + btree + " was not able to be deleted.");
             } else {
-                //TODO do we need to worry about overwriting a file if we run the simulation again?
+                System.out.println("The file " + btree + " could not be created or deleted. Something is wrong.");
             }
         } catch (IOException e) {
-            System.out.println("The file could not be created.");
+            System.out.println("The binary file could not be created.");
             e.printStackTrace();
         }
 
@@ -47,10 +68,21 @@ public class BTree<T> {
      */
     public BTreeNode createBTree() {
         root = new BTreeNode();
+        root.setLocation(0);
         root.setRoot(0);
         root.setLeaf();
         fileWriter.writeNode(root);
+        this.numNodes = 1;
         return root;
+    }
+
+    /*
+    Calculates the offset for a new node that is created
+    Does not write to the file or add a new node. All it does is the math
+     */
+    public int allocateSpace(int numberOfNodes) {
+        int loc = numberOfNodes * ((32*treeDegree) + 9);
+        return loc;
     }
 
     /*
@@ -84,6 +116,8 @@ public class BTree<T> {
         BTreeNode r = fileWriter.getRoot(); //Needs to return a BTreeNode, not an int
         if(r.numKeys() == (2*treeDegree)+1) {
             BTreeNode s = new BTreeNode();
+            s.setLocation(allocateSpace(numNodes));
+            numNodes++;
             s.setRoot(0); // New root
             s.setChild(1,r); //Sets the root to be the new child (at index 0)
             r.setParent(s); //Sets the new root to be the parent of the old root
@@ -121,7 +155,7 @@ public class BTree<T> {
                 i--;
             }
             i++;
-            fileWriter.readNode(x.getLocation(x.getChild(i)));
+            fileWriter.readNode(x.getChild(i).getLocation());
             if((x.getChild(i-1)).numKeys() == (2*treeDegree)-1) {
                 splitChildNode(x,i-1);
                 if(key > x.getKey(i-1)) {
@@ -138,6 +172,9 @@ public class BTree<T> {
      */
     private void splitChildNode(BTreeNode x, int i) {
         BTreeNode z = new BTreeNode();
+        z.setLocation(allocateSpace(numNodes));
+        z.setParent(x);
+        numNodes++;
         BTreeNode y = x.getChild(i); //logic in getChild(i) grabs the correct index
         if(y.leaf()) {
             z.setLeaf();

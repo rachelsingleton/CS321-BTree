@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class BTreeNode {
@@ -16,34 +17,13 @@ public class BTreeNode {
      */
     public BTreeNode() {
         node = new ArrayList<TreeObject>();
-        parentloc = 0; //TODO need method to get the parent
+        parentloc = -2;
         children = new ArrayList<Integer>();
         numKeys = 0;
         root = 1; //means false
         numChildren = 0;
-        location = allocateSpace();
         isLeaf = false;
-    }
-
-    /*
-    Will deal with allocating space in the file depending on t
-    Should give the value(int) of the next available spot in the file
-    
-       /*
-     * 
-     */
-//    public int allocateSpace() {
-//    	int loc = (numNodes+1) * ((32*treeDegree)+9);
-//    	try {
-//    		//seeking and writing to the file
-//    	} catch (IOException e){
-//    		
-//    	}
-//    }
-
-    //TODO: not done yet - needs to work with DataManagement I think
-    public int allocateSpace() {
-        return 0;
+        location = -2;
     }
 
     /*
@@ -72,7 +52,7 @@ public class BTreeNode {
     Does index conversion in the method
      */
     public void setChild(int index, BTreeNode r) {
-        int loc = getLocation(r);
+        int loc = r.getLocation();
         children.add(index-1,loc);
         numChildren++;
     }
@@ -81,8 +61,7 @@ public class BTreeNode {
     Sets the parent of a node to the location of the specified node
      */
     public void setParent(BTreeNode r) {
-        int loc = getLocation(r);
-        parentloc = loc;
+        parentloc = r.getLocation();
     }
 
     /*
@@ -92,9 +71,18 @@ public class BTreeNode {
         return parentloc;
     }
 
-    //TODO should return the location (y offset) from the file - not done yet
-    public int getLocation(BTreeNode node) {
-        return 0;
+    /*
+    Returns the byte offset of a node in the file
+     */
+    public int getLocation() {
+        return location;
+    }
+
+    /*
+    Sets the byte offset of the node in the file
+     */
+    public void setLocation(int location) {
+        this.location = location;
     }
 
     /*
