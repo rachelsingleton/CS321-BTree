@@ -106,10 +106,14 @@ public class BTree<T> {
                 x.setObject(i,x.getObject(i-1));
                 i--;
             }
-            //TODO: logic goes here for dealing with duplicates
-            x.setObject(i,k);
-            x.setKeys(x.numKeys()+1);
-            fileWriter.writeNode(x);
+            if(k.getString() == x.getKey(i)) {
+                System.out.println("The object you are trying to insert is a duplicate.");
+                k.incrementFreq();
+            } else {
+                x.setObject(i,k);
+                x.setKeys(x.numKeys()+1);
+                fileWriter.writeNode(x);
+            }
         } else {
             while((i >= 1) && (key < x.getKey(i-1))) {
                 i--;
