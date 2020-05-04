@@ -55,8 +55,8 @@ public class DataManagement {
     Node doesn't exist until we grab it from it's location which is why we pass in an int instead of a node
      */
     //TODO: not done
-    public BTreeNode readNode(int val) {
-
+    public BTreeNode readNode(BTreeNode node) {
+        int val = node.getLocation(); //getting the offset location in the file
         return null;
     }
     

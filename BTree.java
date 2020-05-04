@@ -155,7 +155,7 @@ public class BTree<T> {
                 i--;
             }
             i++;
-            fileWriter.readNode(x.getChild(i).getLocation());
+            fileWriter.readNode(x.getChild(i));
             if((x.getChild(i-1)).numKeys() == (2*treeDegree)-1) {
                 splitChildNode(x,i-1);
                 if(key > x.getKey(i-1)) {
