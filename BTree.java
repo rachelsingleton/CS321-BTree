@@ -155,14 +155,14 @@ public class BTree<T> {
                 i--;
             }
             i++;
-            fileWriter.readNode(x.getChild(i));
-            if((x.getChild(i-1)).numKeys() == (2*treeDegree)-1) {
+            BTreeNode child = x.getChild(i);
+            if(child.numKeys() == (2*treeDegree)-1) {
                 splitChildNode(x,i-1);
                 if(key > x.getKey(i-1)) {
                     i++;
                 }
             }
-            insertNonFull(x.getChild(i-1),k);
+            insertNonFull(x.getChild(i),k);
         }
     }
 
