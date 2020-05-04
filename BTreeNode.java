@@ -28,7 +28,19 @@ public class BTreeNode {
     /*
     Will deal with allocating space in the file depending on t
     Should give the value(int) of the next available spot in the file
+    
+       /*
+     * 
      */
+//    public int allocateSpace() {
+//    	int loc = (numNodes+1) * ((32*treeDegree)+9);
+//    	try {
+//    		//seeking and writing to the file
+//    	} catch (IOException e){
+//    		
+//    	}
+//    }
+
     //TODO: not done yet - needs to work with DataManagement I think
     public int allocateSpace() {
         return 0;

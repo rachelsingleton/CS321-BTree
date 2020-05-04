@@ -21,10 +21,12 @@ public class BTree<T> {
 		this.treeDegree = degree;
 		this.seqLen = sequenceLength;
 		
+		//create separate metadata file
+		
         try {
             btree = new File(gbkFileName + ".btree.data." + seqLen + "." + treeDegree);
             if (btree.createNewFile()) {
-                System.out.println("The file " + btree + " was created successfully.");
+                System.out.println("The file " + btree + "was created successfully.");
             } else {
                 //TODO do we need to worry about overwriting a file if we run the simulation again?
             }
@@ -80,7 +82,7 @@ public class BTree<T> {
     public void insertKey(Long data) {
     	TreeObject newObject = new TreeObject(data);
         BTreeNode r = fileWriter.getRoot(); //Needs to return a BTreeNode, not an int
-        if(r.numKeys() == (2*treeDegree)-1) {
+        if(r.numKeys() == (2*treeDegree)+1) {
             BTreeNode s = new BTreeNode();
             s.setRoot(0); // New root
             s.setChild(1,r); //Sets the root to be the new child (at index 0)

@@ -9,6 +9,20 @@ public class DataManagement {
     }
 
     /*
+     * 
+     */
+    public int allocateSpace() {
+    	int loc = (numNodes+1) * ((32*treeDegree)+9);
+    	try {
+    		//seeking and writing to the file
+    	} catch (IOException e){
+    		
+    	}
+    }
+    
+    /*
+     * every 32t+9 is the max amount of room a node would need 
+     * 
 	Physically writes the byte buffer array to the file
 	The byte buffer array contains all information about one specific node
 	Location that is written to is the byte where space was allocated for the node
@@ -17,6 +31,7 @@ public class DataManagement {
      */
     public void writeNode(BTreeNode node) {
     	//byte[] bytes = write(node); --> gives us the actual array
+    	byte[] bytes = null;
     	//RandomAccess file stuff will write bytes to the actual file
     }
 
