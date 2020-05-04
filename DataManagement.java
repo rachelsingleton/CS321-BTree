@@ -11,14 +11,19 @@ public class DataManagement {
     /*
      * 
      */
-    public int allocateSpace() {
-    	int loc = (numNodes+1) * ((32*treeDegree)+9);
-    	try {
-    		//seeking and writing to the file
-    	} catch (IOException e){
-    		
-    	}
-    }
+//    public int allocateSpace() {
+//    	int loc = (numNodes+1) * ((32*treeDegree)+9);
+//    	try {
+//    		//seeking and writing to the file
+//    	} catch (IOException e){
+//    		
+//    	}
+//    }
+    
+    
+    
+    
+    // test
     
     /*
      * every 32t+9 is the max amount of room a node would need 
