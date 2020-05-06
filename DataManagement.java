@@ -1,29 +1,14 @@
 public class DataManagement {
 
+    int currentNodeLoc;
+
     /*
     Constructor
      */
     //TODO: not done
     public DataManagement() {
-
+        currentNodeLoc = 0;
     }
-
-    /*
-     * 
-     */
-//    public int allocateSpace() {
-//    	int loc = (numNodes+1) * ((32*treeDegree)+9);
-//    	try {
-//    		//seeking and writing to the file
-//    	} catch (IOException e){
-//    		
-//    	}
-//    }
-    
-    
-    
-    
-    // test
     
     /*
      * every 32t+9 is the max amount of room a node would need 
@@ -35,7 +20,9 @@ public class DataManagement {
 	//TODO: file is created in BTree constructor that we are supposed to write to
      */
     public void writeNode(BTreeNode node) {
-    	//byte[] bytes = write(node); --> gives us the actual array
+    	currentNodeLoc = node.getLocation();
+
+        //byte[] bytes = write(node); --> gives us the actual array
     	byte[] bytes = null;
     	//RandomAccess file stuff will write bytes to the actual file
     }

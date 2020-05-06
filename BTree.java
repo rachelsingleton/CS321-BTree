@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 
 public class BTree<T> {
     private BTreeNode root;
@@ -9,8 +10,9 @@ public class BTree<T> {
     private File btree;
     private File btreeMetaData;
     private String binaryFile;
-    private DataManagement fileWriter;
     private int numNodes;
+    int currentNodeLoc = 0;
+    private RandomAccessFile btreeRA;
     
 
     /* Constructor
@@ -21,17 +23,17 @@ public class BTree<T> {
      */
     public BTree(int degree, int sequenceLength, String gbkFileName) {
 
-        fileWriter = new DataManagement();
 		this.treeDegree = degree;
 		this.seqLen = sequenceLength;
 		
 		//Creates a file for storing the metadata of the BTree class
         try {
-            btreeMetaData = new File(gbkFileName + ".btree.metadata." + seqLen + "." + treeDegree);
+            btreeMetaData = new File(gbkFileName + ".btree.metadata." + seqLen + "." + treeDegree + ".");
             if (btreeMetaData.createNewFile()) {
                 System.out.println("The file " + btreeMetaData + " was created successfully.");
-            } else if (btreeMetaData.delete()){
-                System.out.println("The file " + btreeMetaData + " was not able to be deleted.");
+            } else if (btreeMetaData.exists()){
+                btreeMetaData.delete();
+                btreeMetaData.createNewFile();
             } else {
                 System.out.println("The file " + btreeMetaData + " could not be created or deleted. Something is wrong.");
             }
@@ -43,11 +45,12 @@ public class BTree<T> {
 
         // Creates the binary data file that all the node information is stored in
         try {
-            btree = new File(gbkFileName + ".btree.data." + seqLen + "." + treeDegree);
+            btree = new File(gbkFileName + ".btree.data." + seqLen + "." + treeDegree + ".");
             if (btree.createNewFile()) {
                 System.out.println("The file " + btree + " was created successfully.");
-            } else if (btree.delete()){
-                System.out.println("The file " + btree + " was not able to be deleted.");
+            } else if (btree.exists()){
+                btree.delete();
+                btree.createNewFile();
             } else {
                 System.out.println("The file " + btree + " could not be created or deleted. Something is wrong.");
             }
@@ -57,6 +60,11 @@ public class BTree<T> {
         }
 
 		this.binaryFile = btree.getName();
+        try {
+            btreeRA = new RandomAccessFile(binaryFile,"rw");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         createBTree();
     }
@@ -71,7 +79,7 @@ public class BTree<T> {
         root.setLocation(0);
         root.setRoot(0);
         root.setLeaf();
-        fileWriter.writeNode(root);
+        writeNode(root);
         this.numNodes = 1;
         return root;
     }
@@ -106,6 +114,10 @@ public class BTree<T> {
         return binaryFile;
     }
 
+    public File getMetaDataFile() {
+        return btreeMetaData;
+    }
+
     /*
     Inserts an the subsequence of type long into the BTree
     Calls upon other methods in this class - this just checks to see if we are full or not-full
@@ -113,7 +125,7 @@ public class BTree<T> {
      */
     public void insertKey(Long data) {
     	TreeObject newObject = new TreeObject(data);
-        BTreeNode r = fileWriter.getRoot(); //Needs to return a BTreeNode, not an int
+        BTreeNode r = getRoot(); //Needs to return a BTreeNode, not an int
         if(r.numKeys() == (2*treeDegree)+1) {
             BTreeNode s = new BTreeNode();
             s.setLocation(allocateSpace(numNodes));
@@ -148,7 +160,7 @@ public class BTree<T> {
             } else {
                 x.setObject(i,k);
                 x.setKeys(x.numKeys()+1);
-                fileWriter.writeNode(x);
+                writeNode(x);
             }
         } else {
             while((i >= 1) && (key < x.getKey(i-1))) {
@@ -198,11 +210,29 @@ public class BTree<T> {
         }
         x.setObject(i-1,y.getObject(treeDegree-1));
         x.setKeys(x.numKeys()+1);
-        fileWriter.writeNode(y);
-        fileWriter.writeNode(z);
-        fileWriter.writeNode(x);
+        writeNode(y);
+        writeNode(z);
+        writeNode(x);
     }
-    
+
+    public void writeNode(BTreeNode node) {
+        currentNodeLoc = node.getLocation();
+        try {
+            btreeRA.seek(currentNodeLoc);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public BTreeNode getRoot() {
+        return null;
+    }
+
+    public BTreeNode readNode() {
+
+        return null;
+    }
     //TODO:Zach needs to do this
 //    private toString( ) {
 //    	
