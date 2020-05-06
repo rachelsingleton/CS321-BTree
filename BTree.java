@@ -28,9 +28,9 @@ public class BTree<T> {
 		//Creates a file for storing the metadata of the BTree class
         try {
             btreeMetaData = new File(gbkFileName + ".btree.metadata." + seqLen + "." + treeDegree);
-            if (btree.createNewFile()) {
+            if (btreeMetaData.createNewFile()) {
                 System.out.println("The file " + btreeMetaData + " was created successfully.");
-            } else if (btree.delete()){
+            } else if (btreeMetaData.delete()){
                 System.out.println("The file " + btreeMetaData + " was not able to be deleted.");
             } else {
                 System.out.println("The file " + btreeMetaData + " could not be created or deleted. Something is wrong.");
