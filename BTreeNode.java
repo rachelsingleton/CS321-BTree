@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
 public class BTreeNode {
@@ -6,16 +7,18 @@ public class BTreeNode {
     private boolean isLeaf;
     private int numKeys;
     private int numChildren;
-    private ArrayList<TreeObject> node;
     private int parentloc;
     private ArrayList<Integer> children;
     private int location; // Node's location in binary file
+    private int totalNodeSize;
+    private int degree;
+    private ArrayList<TreeObject> node;
 
     /*
     Constructor
     Needs to create an empty node and allocate the space somehow
      */
-    public BTreeNode() {
+    public BTreeNode(int degree) {
         node = new ArrayList<TreeObject>();
         parentloc = -2;
         children = new ArrayList<Integer>();
@@ -24,6 +27,7 @@ public class BTreeNode {
         numChildren = 0;
         isLeaf = false;
         location = -2;
+        this.degree = degree;
     }
 
     /*
@@ -38,9 +42,9 @@ public class BTreeNode {
     Put in child number you want but since we are indexing, we have to subtract 1
     Ex: Child 1 is at index 0 in the list
      */
-    public BTreeNode getChild(int index) {
+    public BTreeNode getChild(int index, RandomAccessFile file) {
         int val = children.get(index-1);
-        DataManagement filewriter = new DataManagement();
+        DataManagement filewriter = new DataManagement(file);
         return filewriter.readNode(val);
     }
 
@@ -169,5 +173,25 @@ public class BTreeNode {
     public void setObject(int i, TreeObject object) {
         node.add(i,object);
         numKeys++;
+    }
+
+    public int getNumChildren() {
+        return numChildren;
+    }
+
+    public ArrayList getNode() {
+        return node;
+    }
+
+    public int getRootInt() {
+        return root;
+    }
+
+    public int getNodeSize() {
+        return ((32*degree) + 17);
+    }
+
+    public int getDegree() {
+        return degree;
     }
 }

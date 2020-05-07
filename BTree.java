@@ -5,15 +5,16 @@ import java.io.RandomAccessFile;
 
 public class BTree<T> {
     private BTreeNode root;
+    private int rootLoc;
     private int treeDegree;
     private int seqLen;
-    private int isRoot;
     private File btree;
     private File btreeMetaData;
     private String binaryFile;
     private int numNodes;
     int currentNodeLoc = 0;
     private RandomAccessFile btreeRA;
+    private DataManagement filewriter;
     
 
     /* Constructor
@@ -66,7 +67,7 @@ public class BTree<T> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        filewriter = new DataManagement(btreeRA);
         createBTree();
     }
 
@@ -76,11 +77,19 @@ public class BTree<T> {
     Called in the constructor
      */
     public BTreeNode createBTree() {
-        root = new BTreeNode();
-        root.setLocation(0);
+        root = new BTreeNode(treeDegree);
+        root.setLocation(4);
         root.setRoot(0);
+        rootLoc = 0;
         root.setLeaf();
-        writeNode(root);
+        try {
+            // The first root location should be at index 0 in the binary file
+            btreeRA.seek(0);
+            btreeRA.writeInt(rootLoc);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        filewriter.writeNode(root);
         this.numNodes = 1;
         return root;
     }
@@ -90,7 +99,7 @@ public class BTree<T> {
     Does not write to the file or add a new node. All it does is the math
      */
     public int allocateSpace(int numberOfNodes) {
-        int loc = numberOfNodes * ((32*treeDegree) + 9);
+        int loc = numberOfNodes * ((32*treeDegree) + 17);
         return loc;
     }
 
@@ -119,6 +128,10 @@ public class BTree<T> {
         return btreeMetaData;
     }
 
+    public int getRootLoc() {
+        return rootLoc;
+    }
+
     /*
     Inserts an the subsequence of type long into the BTree
     Calls upon other methods in this class - this just checks to see if we are full or not-full
@@ -126,12 +139,13 @@ public class BTree<T> {
      */
     public void insertKey(Long data) {
     	TreeObject newObject = new TreeObject(data);
-        BTreeNode r = getRoot(); //Needs to return a BTreeNode, not an int
+        BTreeNode r = filewriter.getRoot(); //Needs to return a BTreeNode, not an int
         if(r.numKeys() == (2*treeDegree)+1) {
-            BTreeNode s = new BTreeNode();
-            s.setLocation(allocateSpace(numNodes));
+            BTreeNode s = new BTreeNode(treeDegree);
             numNodes++;
+            s.setLocation(allocateSpace(numNodes));
             s.setRoot(0); // New root
+            rootLoc = s.getLocation();
             s.setChild(1,r); //Sets the root to be the new child (at index 0)
             r.setParent(s); //Sets the new root to be the parent of the old root
             s.setLeaf(); //Sets the leaf status of the new node
@@ -161,21 +175,21 @@ public class BTree<T> {
             } else {
                 x.setObject(i,k);
                 x.setKeys(x.numKeys()+1);
-                writeNode(x);
+                filewriter.writeNode(x);
             }
         } else {
             while((i >= 1) && (key < x.getKey(i-1))) {
                 i--;
             }
             i++;
-            BTreeNode child = x.getChild(i);
+            BTreeNode child = x.getChild(i,btreeRA);
             if(child.numKeys() == (2*treeDegree)-1) {
                 splitChildNode(x,i-1);
                 if(key > x.getKey(i-1)) {
                     i++;
                 }
             }
-            insertNonFull(x.getChild(i),k);
+            insertNonFull(x.getChild(i,btreeRA),k);
         }
     }
 
@@ -184,11 +198,11 @@ public class BTree<T> {
     Passing in child number, not actual index of where the child exists in the array
      */
     private void splitChildNode(BTreeNode x, int i) {
-        BTreeNode z = new BTreeNode();
+        BTreeNode z = new BTreeNode(treeDegree);
+        numNodes++;
         z.setLocation(allocateSpace(numNodes));
         z.setParent(x);
-        numNodes++;
-        BTreeNode y = x.getChild(i); //logic in getChild(i) grabs the correct index
+        BTreeNode y = x.getChild(i,btreeRA); //logic in getChild(i) grabs the correct index
         if(y.leaf()) {
             z.setLeaf();
         }
@@ -198,12 +212,12 @@ public class BTree<T> {
         }
         if(!y.leaf()) {
             for(int j=1; j <= treeDegree; j++) {
-                z.setChild(j,y.getChild(j+treeDegree));
+                z.setChild(j,y.getChild(j+treeDegree,btreeRA));
             }
         }
         y.setKeys(treeDegree - 1);
         for(int j=x.numKeys()+1; j>i+1;j--) {
-            x.setChild(j+1,x.getChild(j));
+            x.setChild(j+1,x.getChild(j,btreeRA));
         }
         x.setChild(i+1,z);
         for(int j=x.numKeys();j>i;j--) {
@@ -211,29 +225,31 @@ public class BTree<T> {
         }
         x.setObject(i-1,y.getObject(treeDegree-1));
         x.setKeys(x.numKeys()+1);
-        writeNode(y);
-        writeNode(z);
-        writeNode(x);
+        filewriter.writeNode(y);
+        filewriter.writeNode(z);
+        filewriter.writeNode(x);
     }
 
-    public void writeNode(BTreeNode node) {
-        currentNodeLoc = node.getLocation();
-        try {
-            btreeRA.seek(currentNodeLoc);
-
-        } catch (IOException e) {
-            e.printStackTrace();
+    /*
+    Searches the given BTree file for a given key from a query file
+     */
+    //TODO: What should this return? - logic is done except for return statement stuff
+    public void searchBTree(Long data,BTreeNode treeRoot) {
+        int i = 1;
+        while(i <= root.numKeys() && (data > treeRoot.getKey(i-1))) {
+            i++;
+        }
+        if(i <= root.numKeys() && (data == treeRoot.getKey(i-1))) {
+            //TODO: What do we want to return here?
+        } else if(root.leaf()) {
+            //TODO: What do we want to return if it hasn't been found?
+        } else {
+            BTreeNode child = root.getChild(i,btreeRA);
+            //TODO: Can uncomment this once we decide what we want to return
+//            return searchBTree(data,child);
         }
     }
 
-    public BTreeNode getRoot() {
-        return null;
-    }
-
-    public BTreeNode readNode() {
-
-        return null;
-    }
 
     //DumpFile Method 
     //Ex. test3.gbk.btree.dump.6

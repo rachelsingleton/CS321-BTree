@@ -4,6 +4,11 @@ import java.lang.NumberFormatException;
 
 public class GeneBankSearch {
 
+    //TODO: do file parsing, binary conversion, and call searchBTree() in this class
+    // Will need to pass in the root of the tree to call this method
+    // The root location can be gotten by the getRoot() method in DataManagement or by reading in the
+    // first integer from the binary file --> this will just give a location and then you will have to
+    // do other logic to actually get the node (the way you do it depends on if you want a DataManagement object)
     public static void main(String[] args) {
         File file1 = null;
         File file2 = null;

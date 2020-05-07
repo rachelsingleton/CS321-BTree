@@ -3,7 +3,6 @@ public class TreeObject {
 	// Instance Variables
 	private long key;
 	private int frequency;
-	private long substring;
 
 	// Constructor
 	/*
@@ -42,7 +41,7 @@ public class TreeObject {
 	 */
 	public String toString() {
 
-		String data = Long.toString(substring, 2);
+		String data = Long.toString(key, 2);
 
 		if (data.length() % 2 != 0 && data.charAt(0) == '0') {
 			data = data.replaceFirst("0", "A");
