@@ -81,10 +81,11 @@ public class DataManagement {
             readNode.setLocation(bb.getInt());
             readNode.setDegree(bb.getInt());
             int i = 0;
-            while(i < 10 && ) {
+            while(bb.hasRemaining() ) {
                 TreeObject ob = new TreeObject(bb.getLong());
                 ob.setFrequency(bb.getInt());
                 readNode.setObject(i, ob);
+                i++;
             }
 
         } catch (IOException e) {
