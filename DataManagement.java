@@ -7,14 +7,17 @@ public class DataManagement {
 
     int currentNodeLoc;
     RandomAccessFile treeFile;
+    BTreeNode readNode;
+    int arrayLength;
 
     /*
     Constructor
      */
-    //TODO: not done
     public DataManagement(RandomAccessFile file) {
         currentNodeLoc = 0;
         treeFile = file;
+        readNode = null;
+        arrayLength = 0;
     }
     
     /*
@@ -27,6 +30,7 @@ public class DataManagement {
             currentNodeLoc = node.getLocation();
             try {
                 byte[] bytes = arrayFiller(node);
+                arrayLength = bytes.length;
                 treeFile.seek(currentNodeLoc);
                 treeFile.write(bytes);
 
@@ -56,10 +60,37 @@ public class DataManagement {
     May have to do some converting if we want to grab a specific node but don't have location - ever happen?
     Node doesn't exist until we grab it from it's location which is why we pass in an int instead of a node
      */
-    //TODO: not done
-    // will have to do the opposite of arrayFiller()
     public BTreeNode readNode(int location) {
-        return null;
+        try {
+            byte[] bytes = new byte[arrayLength];
+            treeFile.seek(location);
+            treeFile.read(bytes);
+            ByteBuffer bb = ByteBuffer.allocate(arrayLength);
+            bb.put(bytes);
+            readNode.setRoot(bb.getInt());
+            readNode.setLeafOverload(bb.getInt());
+            readNode.setKeys(bb.getInt());
+            int numC = bb.getInt();
+            readNode.setNumChildren(numC);
+            readNode.setParentLoc(bb.getInt());
+            int j = 0;
+            while(j < numC) {
+                readNode.setChildOverload(j,bb.getInt());
+                j++;
+            }
+            readNode.setLocation(bb.getInt());
+            readNode.setDegree(bb.getInt());
+            int i = 0;
+            while(i < 10 && ) {
+                TreeObject ob = new TreeObject(bb.getLong());
+                ob.setFrequency(bb.getInt());
+                readNode.setObject(i, ob);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return readNode;
     }
 
 
@@ -83,7 +114,6 @@ public class DataManagement {
             bb.putInt(childrenTemp.get(i));
         }
         bb.putInt(node.getLocation());
-        bb.putInt(node.getNodeSize());
         bb.putInt(node.getDegree());
         ArrayList<TreeObject> nodeTemp = node.getNode();
         for (int i = 0; i < nodeTemp.size();i++) {

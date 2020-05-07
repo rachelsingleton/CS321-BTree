@@ -28,6 +28,10 @@ public class TreeObject {
 		return frequency;
 	}
 
+	public void setFrequency(int value) {
+		frequency = value;
+	}
+
 	/*
 	 * Returns the key (aka gene substring)
 	 */

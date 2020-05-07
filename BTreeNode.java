@@ -10,7 +10,6 @@ public class BTreeNode {
     private int parentloc;
     private ArrayList<Integer> children;
     private int location; // Node's location in binary file
-    private int totalNodeSize;
     private int degree;
     private ArrayList<TreeObject> node;
 
@@ -61,6 +60,10 @@ public class BTreeNode {
         numChildren++;
     }
 
+    public void setChildOverload(int index, int value) {
+        children.set(index,value);
+    }
+
     /*
     Sets the parent of a node to the location of the specified node
      */
@@ -73,6 +76,10 @@ public class BTreeNode {
      */
     public int getParent() {
         return parentloc;
+    }
+
+    public void setParentLoc(int value) {
+        parentloc = value;
     }
 
     /*
@@ -117,6 +124,18 @@ public class BTreeNode {
             isLeaf = false;
         }
         return isLeaf;
+    }
+
+    public void setLeafOverload(int val){
+        if(val==0) {
+            isLeaf = true;
+        } else {
+            isLeaf = false;
+        }
+    }
+
+    public void setNumChildren(int value) {
+        numChildren = value;
     }
 
     /*
@@ -193,5 +212,9 @@ public class BTreeNode {
 
     public int getDegree() {
         return degree;
+    }
+
+    public void setDegree(int value) {
+        degree = value;
     }
 }
