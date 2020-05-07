@@ -28,6 +28,8 @@ We chose to design our BTree like the following:
 
 #### Issues we ran into:
 
+#### Cache Size Observations:
+
 #### Math to figure out the optimal degree for our BTree:
 * metadata for 1 BTreeNode = 17 bytes
 * 1 parent pointer = 4 bytes
