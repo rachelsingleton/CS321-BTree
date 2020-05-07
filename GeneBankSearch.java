@@ -10,16 +10,16 @@ public class GeneBankSearch {
     // first integer from the binary file --> this will just give a location and then you will have to
     // do other logic to actually get the node (the way you do it depends on if you want a DataManagement object)
     public static void main(String[] args) {
-        File file1 = null;
-        File file2 = null;
+        File btreeFile = null;
+        File queryFile = null;
         int sequenceLength = 0;
         int querySeqLen = 0;
         int btreeSeqLen = 0;
         boolean cache = false;
         int cacheSize = 0;
         int debug = 0;
-        String[] file1Name;
-        String file2Name;
+        String[] btreeFileName;
+        String queryFileName;
 
         try {
             // Checks to make sure we have a valid number of arguments
@@ -38,20 +38,20 @@ public class GeneBankSearch {
             }
 
             // Grabs the btree file
-            file1 = new File(args[1]);
-            if (!file1.exists() || !file1.isFile()) {
+            btreeFile = new File(args[1]);
+            if (!btreeFile.exists() || !btreeFile.isFile()) {
                 usage();
             }
-            file1Name = file1.getName().split("\\.");
-            btreeSeqLen = Integer.parseInt(file1Name[4]);
+            btreeFileName = btreeFile.getName().split("\\.");
+            btreeSeqLen = Integer.parseInt(btreeFileName[4]);
 
             // Grabs the query file
-            file2 = new File(args[2]);
-            if (!file2.exists() || !file2.isFile()) {
+            queryFile = new File(args[2]);
+            if (!queryFile.exists() || !queryFile.isFile()) {
                 usage();
             }
-            file2Name = file2.getName();
-            querySeqLen = Integer.parseInt(file2Name.substring(file2Name.lastIndexOf('y') + 1));
+            queryFileName = queryFile.getName();
+            querySeqLen = Integer.parseInt(queryFileName.substring(queryFileName.lastIndexOf('y') + 1));
 
             // Checking to make sure we are using the correct files
             if(btreeSeqLen != querySeqLen) {
