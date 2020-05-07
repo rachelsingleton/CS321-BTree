@@ -27,14 +27,13 @@ public class GeneBankCreateBTree {
 
 			// Todo: logic dealing with degree
 			int degree = Integer.parseInt(args[1]);
-			if (degree < 0) {
+			if (degree < 0 || degree > 127) {
 				usage();
 			}
 			
 			// Todo:Math for ideal degree
-			// TODO: check to make sure it isn't bigger than ideal degree
 			if (degree == 0) {
-				System.out.println("the ideal degree formula");
+				degree = 127;
 			}
 
 			file = new File(args[2]);
@@ -133,7 +132,6 @@ public class GeneBankCreateBTree {
 										//System.out.println(dna + " " + z);
 										
 										long genesBinary = Long.parseLong(dna,2);
-										//TreeObject tree = new TreeObject(genesBinary);
 										tree.insertKey(genesBinary);
 
 								}

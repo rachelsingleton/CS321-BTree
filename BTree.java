@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
@@ -233,8 +234,21 @@ public class BTree<T> {
 
         return null;
     }
-    //TODO:Zach needs to do this
-//    private toString( ) {
+
+    //DumpFile Method 
+    //Ex. test3.gbk.btree.dump.6
+//    public void createDumpFile() {
+//     try {
+//		FileWriter dumpFile = new FileWriter("TestDumpFile");
+//	} catch (IOException e) {
+//		System.out.println("Error");
+//		e.printStackTrace();
+//	}
+//    }
+//    
+//    public void printToDumpFile(FileWriter dumpFile, BTreeNode root, int sequenceLength) {
+//    	BTreeNode CurrentNode = root;
+//    	
 //    	
 //    }
 //    
