@@ -67,7 +67,7 @@ public class BTree<T> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        filewriter = new DataManagement(btreeRA);
+        filewriter = new DataManagement(btreeRA,treeDegree);
         createBTree();
     }
 
@@ -77,19 +77,22 @@ public class BTree<T> {
     Called in the constructor
      */
     public BTreeNode createBTree() {
+        System.out.println("Hey there");
         root = new BTreeNode(treeDegree);
         root.setLocation(4);
         root.setRoot(0);
-        rootLoc = 0;
+        rootLoc = 4;
         root.setLeaf();
         try {
             // The first root location should be at index 0 in the binary file
             btreeRA.seek(0);
             btreeRA.writeInt(rootLoc);
+            System.out.println("Wrote the root location correctly");
         } catch (IOException e) {
             e.printStackTrace();
         }
         filewriter.writeNode(root);
+        System.out.println("Hopefully wrote the root.");
         this.numNodes = 1;
         return root;
     }
@@ -138,6 +141,7 @@ public class BTree<T> {
     Inserting the sequence versus object to help with logic. We create the tree object after we try to insert.
      */
     public void insertKey(Long data) {
+        System.out.println("Inserting...");
     	TreeObject newObject = new TreeObject(data);
         BTreeNode r = filewriter.getRoot(); //Needs to return a BTreeNode, not an int
         if(r.numKeys() == (2*treeDegree)+1) {
@@ -175,7 +179,9 @@ public class BTree<T> {
             } else {
                 x.setObject(i,k);
                 x.setKeys(x.numKeys()+1);
+                System.out.println("Going to write node to file...");
                 filewriter.writeNode(x);
+                System.out.println("Done inserting...");
             }
         } else {
             while((i >= 1) && (key < x.getKey(i-1))) {

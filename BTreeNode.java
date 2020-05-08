@@ -43,7 +43,7 @@ public class BTreeNode {
      */
     public BTreeNode getChild(int index, RandomAccessFile file) {
         int val = children.get(index-1);
-        DataManagement filewriter = new DataManagement(file);
+        DataManagement filewriter = new DataManagement(file,degree);
         return filewriter.readNode(val);
     }
 
