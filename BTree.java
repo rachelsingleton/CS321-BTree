@@ -273,5 +273,50 @@ public class BTree<T> {
 //    	
 //    }
 //    
+    public void writeNode(BTreeNode node) {
+        currentNodeLoc = node.getLocation();
+        try {
+            btreeRA.seek(currentNodeLoc);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public BTreeNode getRoot() {
+        return null;
+    }
+
+    public BTreeNode readNode() {
+
+        return null;
+    }
+
+    //DumpFile Method 
+   // Ex. test3.gbk.btree.dump.6
+    public void createTreeDump(int key) throws IOException {
+        PrintWriter pw = null;
+        try {
+            pw = new PrintWriter("dump");
+        } catch (FileNotFoundException e) {
+            System.out.println("createTreeDump - Error in dump file creation.");
+            e.printStackTrace();
+        }
+        traverseTreeDump(pw, root, key);
+        pw.close();
+    }
+   
+   
+   public void traverseTreeDump(PrintWriter pw, BTreeNode rootNode, int sequenceLength) throws IOException {
+        BTreeNode node = rootNode;
+        int i = 0;
+        for ( i = 0; i < node.getNumKeys(); i++) {
+
+            if(node.leaf() == false) {
+                int childPointer = node.getChild(i);
+            }
+
+        }
+    }
 }
 
