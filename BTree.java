@@ -230,6 +230,9 @@ public class BTree<T> {
         for(int j=0; j < (treeDegree)-1;j++) {
             z.setObject(j,y.getObject(j+treeDegree));
         }
+        for(int p=y.getNode().size()-1; p >= treeDegree;i--) {
+            y.removeObject(p);
+        }
         if(!y.leaf()) {
             for(int j=0; j < treeDegree; j++) {
                 z.setChild(j,y.getChild(j+treeDegree,btreeRA));
@@ -243,6 +246,7 @@ public class BTree<T> {
         for(int j=x.getNumKeys()-1;j > i-1;j--) {
             x.setObject(j+1,x.getObject(j));
         }
+        y.removeObject(treeDegree-1);
         x.setObject(i,y.getObject(treeDegree-1));
         x.setKeys(x.getNumKeys()+1);
         filewriter.writeNode(y);

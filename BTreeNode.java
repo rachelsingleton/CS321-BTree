@@ -36,6 +36,10 @@ public class BTreeNode {
         return children;
     }
 
+    public void removeObject(int index) {
+        node.remove(index);
+    }
+
     /*
     Returns a specified child from the node (returns the actual node, not location in file)
     Put in child number you want but since we are indexing, we have to subtract 1
