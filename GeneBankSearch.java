@@ -16,6 +16,7 @@ public class GeneBankSearch {
         int querySeqLen = 0;
         int btreeSeqLen = 0;
         boolean cache = false;
+        boolean debugFlag = false;
         int cacheSize = 0;
         int debug = 0;
         String[] btreeFileName;
@@ -70,8 +71,10 @@ public class GeneBankSearch {
                 } else {
                     // Use debug if cache isn't enabled
                     debug = Integer.parseInt(args[3]);
-                    if (debug != 0 || debug != 1) {
+                    if (debug != 0) {
                         usage();
+                    } else {
+                    	debugFlag = true;
                     }
                 }
                 // Both optional arguments are enabled
@@ -85,6 +88,66 @@ public class GeneBankSearch {
                     usage();
                 }
             }
+            
+            
+            //Instantiate BTree to perform search which will compare the sequences in the binary file with the query file
+            //this tree must reference the already made file in geneBankCreateBtree
+            
+            //Btree tree = new BTree(btreeFile) - not sure how to implement this. We could create an additional constructor 
+            //and do something similar to this
+            
+            /*
+             * 	public BTree(File BtreeFile, File metadata, Cache cache) throws IOException {	
+					btreeRAF = new RandomAccessFile(metadata, "r");
+					this.t = btreeRAF.readInt(); //read in degree in terms of t
+					this.seqLength = btreeRAF.readInt(); //sequence length (k) 
+					btreeRAF.close();
+					
+					this.BtreeFile = BtreeFile;
+					btreeRAF = new RandomAccessFile(BtreeFile, "r");
+					root = diskRead(0);		
+					btreeRAF.close();
+					
+					this.cache = cache;
+					}
+             */
+            //RandomAccessFile file = new RandomAccessFile(btreeFile,"r");
+            
+            
+            //read through the query file converting strings into Binary
+            /*
+             *  Scanner scanQueryFile = new Scanner(queryFile)
+             *  String queryLine;
+             *  
+             *  while(scanQueryFile.hasNextLine() {
+	             *  String queryLine = scanQueryFile.nextLine();
+					line = line.toUpperCase();
+					queryLine = queryLine.replaceAll("\\s+", "");
+					
+					queryLine = queryLine.replace("A", "00");
+					queryLine = queryLine.replace("T", "11");
+					queryLine = queryLine.replace("C", "01");
+					queryLine = queryLine.replace("G", "10");
+					long queryBinary = Long.parseLong(queryLine, 2);
+             */
+            
+            //call search on Tree
+            //tree.searchBTree(queryBinary, root)  - not sure how to implement this
+            
+            /*Example of how to print out the converted sequences plus frequency
+             * 
+             * while(queryScanner.hasNextLine())
+             * 
+             * BTreeNode searchKey = tree.search(tree.root, data);
+             * if(searchKey == null) return;
+				for(int i = 0; i < searchKey.keys.length; i++){
+					if(searchKey.keys[i].key == k)
+						System.out.println(bt.longToSequence(k, metaSeqLength) + " " + searchKey.keys[i].freq);
+				}				
+             * 
+             */
+            
+            
         } catch (Exception e) {
             e.printStackTrace();
             usage();
