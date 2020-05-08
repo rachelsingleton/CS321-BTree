@@ -103,7 +103,8 @@ public class DataManagement {
     Creates the array of the data in a node to write it into a binary file
      */
     public byte[] arrayFiller(BTreeNode node) {
-        ByteBuffer bb = ByteBuffer.allocate(node.getNodeSize());
+        ByteBuffer bb = ByteBuffer.allocate(node.getNodeSize()+3);
+        System.out.println(node.getNodeSize());
         bb.putInt(node.getRootInt());
         boolean isLeafTemp = node.leaf();
         if(isLeafTemp) {
@@ -126,6 +127,10 @@ public class DataManagement {
             bb.putInt(nodeTemp.get(i).getFrequency());
         }
         System.out.println(bb);
+        
+        for(int i = 0; i < bb.remaining()/4; i++) {
+        	bb.putInt(0);
+        }
         return bb.array();
     }
 
