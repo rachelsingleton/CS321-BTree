@@ -129,7 +129,7 @@ public class BTree<T> {
     public void insertKey(Long data) {
     	TreeObject newObject = new TreeObject(data);
         BTreeNode r = getRoot(); //Needs to return a BTreeNode, not an int
-        if(r.numKeys() == (2*treeDegree)+1) {
+        if(r.getNumKeys() == (2*treeDegree)+1) {
             BTreeNode s = new BTreeNode();
             s.setLocation(allocateSpace(numNodes));
             numNodes++;
@@ -237,27 +237,31 @@ public class BTree<T> {
         return null;
     }
 
-    //DumpFile Method 
-   // Ex. test3.gbk.btree.dump.6
-    public void createTreeDump(int key) throws IOException {
-        PrintWriter pw = null;
-        try {
-            pw = new PrintWriter("dump");
-        } catch (FileNotFoundException e) {
-            System.out.println("createTreeDump - Error in dump file creation.");
-            e.printStackTrace();
-        }
-        traverseTreeDump(pw, root, key);
-        pw.close();
-    }
+//     //DumpFile Method 
+//    // Ex. test3.gbk.btree.dump.6
+//     public void createTreeDump(int key) throws IOException {
+//         PrintWriter pw = null;
+//         try {
+//             pw = new PrintWriter("dump");
+//         } catch (FileNotFoundException e) {
+//             System.out.println("createTreeDump - Error in dump file creation.");
+//             e.printStackTrace();
+//         }
+//         traverseTreeDump(pw, root, key);
+//         pw.close();
+//     }
    
    
-   public void traverseTreeDump(PrintWriter pw, BTreeNode rootNode, int sequenceLength) throws IOException {
-        BTreeNode node = rootNode;
-        int i = 0;
-        for ( i = 0; i < node.get(); i++) {
+//    public void traverseTreeDump(PrintWriter pw, BTreeNode rootNode, int sequenceLength) throws IOException {
+//         BTreeNode node = rootNode;
+//         int i = 0;
+//         for ( i = 0; i < node.getNumKeys(); i++) {
 
-        }
-    }
-}
+//             if(node.leaf() == false) {
+//                 int childPointer = node.getChild(i);
+//             }
+
+//         }
+//     }
+// }
 
