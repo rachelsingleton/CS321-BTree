@@ -27,6 +27,14 @@ We chose to design our BTree like the following:
 
 
 #### Issues we ran into:
+This project came at a difficult time for everyone in our group. Not only did we have one group member (Rachel Singleton) who was forced
+to move back to Seattle, Washington late-semester. We also had one member (Michael Smith) who contracted some illness and was not able to contribute anything to the project.
+We were not able to successfully implement: any cache functionality, dump file creation of a specified sequence and frequency, and any search
+capability from geneBankSearch. Many problems arose from miscommunications, work (and loss of) and a general inability to access resources that would have
+been available to us if we had not been forced to access our classes remotely (tutoring centers, in-person LA meetings, etc.).
+
+We were able to complete a modicum of functionality from geneBankCreateBTree that successfully created a binary file with the correct amount of sequences converted
+correctly. 
 
 #### Cache Size Observations:
 
