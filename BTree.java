@@ -240,19 +240,18 @@ public class BTree<T> {
     Searches the given BTree file for a given key from a query file
      */
     //TODO: What should this return? - logic is done except for return statement stuff
-    public void searchBTree(Long data,BTreeNode treeRoot) {
+    public void searchBTree(Long data,BTreeNode treeRoot,RandomAccessFile btreeFile) {
         int i = 1;
-        while(i <= root.numKeys() && (data > treeRoot.getKey(i-1))) {
+        while(i <= treeRoot.numKeys() && (data > treeRoot.getKey(i-1))) {
             i++;
         }
-        if(i <= root.numKeys() && (data == treeRoot.getKey(i-1))) {
+        if(i <= treeRoot.numKeys() && (data == treeRoot.getKey(i-1))) {
             //TODO: What do we want to return here?
-        } else if(root.leaf()) {
+        } else if(treeRoot.leaf()) {
             //TODO: What do we want to return if it hasn't been found?
         } else {
-            BTreeNode child = root.getChild(i,btreeRA);
-            //TODO: Can uncomment this once we decide what we want to return
-//            return searchBTree(data,child);
+            BTreeNode child = treeRoot.getChild(i,btreeFile);
+            searchBTree(data,child,btreeFile);
         }
     }
 

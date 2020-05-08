@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.RandomAccessFile;
 import java.util.Arrays;
 import java.lang.NumberFormatException;
 
@@ -21,6 +22,7 @@ public class GeneBankSearch {
         int debug = 0;
         String[] btreeFileName;
         String queryFileName;
+        int degree = 0;
 
         try {
             // Checks to make sure we have a valid number of arguments
@@ -45,6 +47,7 @@ public class GeneBankSearch {
             }
             btreeFileName = btreeFile.getName().split("\\.");
             btreeSeqLen = Integer.parseInt(btreeFileName[4]);
+            degree = Integer.parseInt(btreeFileName[5]);
 
             // Grabs the query file
             queryFile = new File(args[2]);
@@ -90,7 +93,8 @@ public class GeneBankSearch {
             }
             
             
-            //Instantiate BTree to perform search which will compare the sequences in the binary file with the query file
+            //Instantiate BTree to perform a search to check for the number of sequences located in a query
+            //example: q1 has A, T, C G will have a ton of instances of each in any gbk
             //this tree must reference the already made file in geneBankCreateBtree
             
             //Btree tree = new BTree(btreeFile) - not sure how to implement this. We could create an additional constructor 
@@ -111,7 +115,7 @@ public class GeneBankSearch {
 					this.cache = cache;
 					}
              */
-            //RandomAccessFile file = new RandomAccessFile(btreeFile,"r");
+            //KEEP: RandomAccessFile file = new RandomAccessFile(btreeFile,"r");
             
             
             //read through the query file converting strings into Binary
@@ -132,8 +136,12 @@ public class GeneBankSearch {
              */
             
             //call search on Tree
-            //tree.searchBTree(queryBinary, root)  - not sure how to implement this
+            //KEEP: file.seek(0);
+            //KEEP: int root = file.readInt();
+            //KEEP: searchBTree(queryBinary, root, file)
             
+            
+        
             /*Example of how to print out the converted sequences plus frequency
              * 
              * while(queryScanner.hasNextLine())
@@ -162,6 +170,27 @@ public class GeneBankSearch {
     public static void usage() {
         System.out.println(
                 "Usage: java GeneBankSearch <0/1(no/with Cache)> <btree file> <query file> [<cache size>] [<debug level>]");
+    }
+    
+    /*
+    Searches the given BTree file for a given key from a query file
+     */
+    //TODO: What should this return? - logic is done except for return statement stuff
+    public void searchBTree(Long data,int root,RandomAccessFile btreeFile) {
+    	DataManagement filewriter = new DataManagement(btreeFile);
+    	BTreeNode treeRoot = filewriter.readNode(root);
+        int i = 1;
+        while(i <= treeRoot.numKeys() && (data > treeRoot.getKey(i-1))) {
+            i++;
+        }
+        if(i <= treeRoot.numKeys() && (data == treeRoot.getKey(i-1))) {
+            //TODO: What do we want to return here?
+        } else if(treeRoot.leaf()) {
+            //TODO: What do we want to return if it hasn't been found?
+        } else {
+            BTreeNode child = treeRoot.getChild(i,btreeFile);
+            searchBTree(data,child.getLocation(),btreeFile);
+        }
     }
 }
 
