@@ -13,10 +13,10 @@ public class DataManagement {
     /*
     Constructor
      */
-    public DataManagement(RandomAccessFile file) {
+    public DataManagement(RandomAccessFile file, int degree) {
         currentNodeLoc = 0;
         treeFile = file;
-        readNode = null;
+        readNode = new BTreeNode(degree);
         arrayLength = 0;
     }
     
@@ -31,6 +31,7 @@ public class DataManagement {
             try {
                 byte[] bytes = arrayFiller(node);
                 arrayLength = bytes.length;
+                System.out.println(arrayLength);
                 treeFile.seek(currentNodeLoc);
                 treeFile.write(bytes);
 
@@ -48,6 +49,7 @@ public class DataManagement {
         try {
             treeFile.seek(0);
             int loc = treeFile.readInt();
+            System.out.println(loc);
             root = readNode(loc);
         } catch (IOException e) {
             e.printStackTrace();
@@ -67,6 +69,8 @@ public class DataManagement {
             treeFile.read(bytes);
             ByteBuffer bb = ByteBuffer.allocate(arrayLength);
             bb.put(bytes);
+            bb.rewind();
+            System.out.println(bb);
             readNode.setRoot(bb.getInt());
             readNode.setLeafOverload(bb.getInt());
             readNode.setKeys(bb.getInt());
@@ -74,20 +78,19 @@ public class DataManagement {
             readNode.setNumChildren(numC);
             readNode.setParentLoc(bb.getInt());
             int j = 0;
-            while(j < numC) {
-                readNode.setChildOverload(j,bb.getInt());
+            while (j < numC) {
+                readNode.setChildOverload(j, bb.getInt());
                 j++;
             }
             readNode.setLocation(bb.getInt());
             readNode.setDegree(bb.getInt());
             int i = 0;
-            while(bb.hasRemaining() ) {
+            while (bb.hasRemaining()) {
                 TreeObject ob = new TreeObject(bb.getLong());
                 ob.setFrequency(bb.getInt());
                 readNode.setObject(i, ob);
                 i++;
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -121,6 +124,7 @@ public class DataManagement {
             bb.putLong(nodeTemp.get(i).getString());
             bb.putInt(nodeTemp.get(i).getFrequency());
         }
+        System.out.println(bb);
         return bb.array();
     }
 
