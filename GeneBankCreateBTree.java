@@ -18,7 +18,10 @@ public class GeneBankCreateBTree {
 				usage();
 			}
 			// Todo: logic dealing with cache
-			if (!args[0].equals(1) || !args[0].equals(0)) {
+			if (!args[0].equals(0)) {
+				if (args[0].equals(1)) {
+					cache = true;
+				}
 				System.out.println("Did not give a valid option for the cache.");
 				usage();
 			}
