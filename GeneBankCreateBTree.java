@@ -18,12 +18,13 @@ public class GeneBankCreateBTree {
 				usage();
 			}
 			// Todo: logic dealing with cache
-			if (!args[0].equals(0)) {
-				if (args[0].equals(1)) {
-					cache = true;
-				}
+			int cacheValue = Integer.parseInt(args[0]);
+			if (cacheValue != 0 && cacheValue != 1) {
 				System.out.println("Did not give a valid option for the cache.");
 				usage();
+			}
+			if (args[0].equals(1)) {
+				cache = true;
 			}
 
 			// Todo: logic dealing with degree

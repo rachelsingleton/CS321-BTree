@@ -35,7 +35,7 @@ public class TreeObject {
 	/*
 	 * Returns the key (aka gene substring)
 	 */
-	public long getString() {
+	public long getSequence() {
 		return key;
 	}
 

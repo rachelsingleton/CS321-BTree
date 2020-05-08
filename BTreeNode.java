@@ -42,7 +42,7 @@ public class BTreeNode {
     Ex: Child 1 is at index 0 in the list
      */
     public BTreeNode getChild(int index, RandomAccessFile file) {
-        int val = children.get(index-1);
+        int val = children.get(index);
         DataManagement filewriter = new DataManagement(file,degree);
         return filewriter.readNode(val);
     }
@@ -56,7 +56,7 @@ public class BTreeNode {
      */
     public void setChild(int index, BTreeNode r) {
         int loc = r.getLocation();
-        children.add(index-1,loc);
+        children.add(index,loc);
         numChildren++;
     }
 
@@ -172,7 +172,7 @@ public class BTreeNode {
      */
     public long getKey(int i) {
         TreeObject temp = node.get(i);
-        long substring = temp.getString();
+        long substring = temp.getSequence();
         return substring;
     }
 

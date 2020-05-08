@@ -77,7 +77,6 @@ public class BTree<T> {
     Called in the constructor
      */
     public BTreeNode createBTree() {
-        System.out.println("Hey there");
         root = new BTreeNode(treeDegree);
         root.setLocation(4);
         root.setRoot(0);
@@ -87,12 +86,10 @@ public class BTree<T> {
             // The first root location should be at index 0 in the binary file
             btreeRA.seek(0);
             btreeRA.writeInt(rootLoc);
-            System.out.println("Wrote the root location correctly");
         } catch (IOException e) {
             e.printStackTrace();
         }
         filewriter.writeNode(root);
-        System.out.println("Hopefully wrote the root.");
         this.numNodes = 1;
         return root;
     }
@@ -166,36 +163,41 @@ public class BTree<T> {
     Likely that the key will not be inserted in node s
      */
     private void insertNonFull(BTreeNode x, TreeObject k) {
-        int i = x.numKeys(); //total number of keys
-        long key = k.getString();
+        int i = x.numKeys() - 1; //total number of keys
+        long key = k.getSequence();
         if(x.leaf()) {
-            while((i >= 1) && (key < x.getKey(i-1))) { //getting substring from last object (index is one less)
-                x.setObject(i,x.getObject(i-1));
+            while((i >= 0) && (key < x.getKey(i))) { //getting substring from last object (index is one less)
+                x.setObject(i,x.getObject(i));
                 i--;
             }
-            if(k.getString() == x.getKey(i)) {
+            if(i >= 0 && k.getSequence() == x.getKey(i)) {
                 System.out.println("The object you are trying to insert is a duplicate.");
                 k.incrementFreq();
             } else {
-                x.setObject(i,k);
+                x.setObject(i+1,k);
                 x.setKeys(x.numKeys()+1);
                 System.out.println("Going to write node to file...");
                 filewriter.writeNode(x);
                 System.out.println("Done inserting...");
             }
         } else {
-            while((i >= 1) && (key < x.getKey(i-1))) {
+            while((i >= 0) && (key < x.getKey(i-1))) {
                 i--;
             }
-            i++;
-            BTreeNode child = x.getChild(i,btreeRA);
-            if(child.numKeys() == (2*treeDegree)-1) {
-                splitChildNode(x,i-1);
-                if(key > x.getKey(i-1)) {
-                    i++;
-                }
+            if(i >= 0 && k.getSequence() == x.getKey(i)) {
+                System.out.println("The object you are trying to insert is a duplicate.");
+                k.incrementFreq();
+            } else {
+	            i++;
+	            BTreeNode child = x.getChild(i,btreeRA);
+	            if(child.numKeys() == (2*treeDegree)-1) {
+	                splitChildNode(x,i);
+	                if(key > x.getKey(i)) {
+	                    i++;
+	                }
+	            }
+	            insertNonFull(x.getChild(i,btreeRA),k);
             }
-            insertNonFull(x.getChild(i,btreeRA),k);
         }
     }
 
@@ -213,23 +215,23 @@ public class BTree<T> {
             z.setLeaf();
         }
         z.setKeys(treeDegree - 1);
-        for(int j=1; j <= (treeDegree - 1);j++) {
-            z.setObject(j-1,y.getObject(j+treeDegree-1));
+        for(int j=0; j < (treeDegree);j++) {
+            z.setObject(j,y.getObject(j+treeDegree));
         }
         if(!y.leaf()) {
-            for(int j=1; j <= treeDegree; j++) {
+            for(int j=0; j < treeDegree; j++) {
                 z.setChild(j,y.getChild(j+treeDegree,btreeRA));
             }
         }
         y.setKeys(treeDegree - 1);
-        for(int j=x.numKeys()+1; j>i+1;j--) {
+        for(int j=x.numKeys(); j > i;j--) {
             x.setChild(j+1,x.getChild(j,btreeRA));
         }
         x.setChild(i+1,z);
-        for(int j=x.numKeys();j>i;j--) {
-            x.setObject(j,x.getObject(j-1));
+        for(int j=x.numKeys()-1;j > i-1;j--) {
+            x.setObject(j+1,x.getObject(j));
         }
-        x.setObject(i-1,y.getObject(treeDegree-1));
+        x.setObject(i,y.getObject(treeDegree-1));
         x.setKeys(x.numKeys()+1);
         filewriter.writeNode(y);
         filewriter.writeNode(z);

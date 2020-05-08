@@ -19,6 +19,7 @@ public class DataManagement {
         readNode = new BTreeNode(degree);
         arrayLength = 0;
     }
+
     
     /*
     Every 32t+9 is the max amount of room a node would need where t is the tree degree
@@ -85,7 +86,7 @@ public class DataManagement {
             readNode.setLocation(bb.getInt());
             readNode.setDegree(bb.getInt());
             int i = 0;
-            while (bb.hasRemaining()) {
+            while (i < numC-1) {
                 TreeObject ob = new TreeObject(bb.getLong());
                 ob.setFrequency(bb.getInt());
                 readNode.setObject(i, ob);
@@ -121,7 +122,7 @@ public class DataManagement {
         bb.putInt(node.getDegree());
         ArrayList<TreeObject> nodeTemp = node.getNode();
         for (int i = 0; i < nodeTemp.size();i++) {
-            bb.putLong(nodeTemp.get(i).getString());
+            bb.putLong(nodeTemp.get(i).getSequence());
             bb.putInt(nodeTemp.get(i).getFrequency());
         }
         System.out.println(bb);
