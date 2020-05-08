@@ -5,7 +5,6 @@ import java.util.Scanner;
 public class GeneBankCreateBTree {
 
 	public static void main(String[] args) {
-		System.out.println("test");
 		File file = null;
 		int sequenceLength = 0;
 		boolean cache = false;
@@ -15,12 +14,15 @@ public class GeneBankCreateBTree {
 //usage is:java GeneBankCreateBTree <0/1(no/with Cache)> <degree> <gbk file> <sequence length> [<cache size>] [<debug level>]
 		try {
 			if (args.length < 4 || args.length > 6) {
+				System.out.println("Did not use the right number of arguments.");
 				usage();
 			}
 			// Todo: logic dealing with cache
 			if (!args[0].equals(1) || !args[0].equals(0)) {
+				System.out.println("Did not give a valid option for the cache.");
 				usage();
 			}
+
 			if (args[0].equals(1)) {
 				cache = true;
 			}
@@ -28,6 +30,7 @@ public class GeneBankCreateBTree {
 			// Todo: logic dealing with degree
 			int degree = Integer.parseInt(args[1]);
 			if (degree < 0 || degree > 127) {
+				System.out.println("Did not give a valid degree.");
 				usage();
 			}
 			
@@ -38,10 +41,12 @@ public class GeneBankCreateBTree {
 
 			file = new File(args[2]);
 			if (!file.exists() || !file.isFile()) {
+				System.out.println("The gbk file doesn't exist.");
 				usage();
 			}
 			sequenceLength = Integer.parseInt(args[3]);
 			if (sequenceLength < 1 || sequenceLength > 31) {
+				System.out.println("Did not give a valid sequence length.");
 				usage();
 			}
 
@@ -49,21 +54,25 @@ public class GeneBankCreateBTree {
 				if (cache) {
 					cacheSize = Integer.parseInt(args[4]);
 					if (cacheSize < 1) {
+						System.out.println("Did not give a valid cache size.");
 						usage();
 					}
 				} else {
 					debug = Integer.parseInt(args[4]);
 					if (debug != 0 || debug != 1) {
+						System.out.println("Did not give a valid debug argument.");
 						usage();
 					}
 				}
 			} else if (args.length == 6) {
 				cacheSize = Integer.parseInt(args[4]);
 				if (cacheSize < 1) {
+					System.out.println("Did not give a valid cache size.");
 					usage();
 				}
 				debug = Integer.parseInt(args[5]);
 				if (debug != 0 || debug != 1) {
+					System.out.println("Did not give a valid debug argument.");
 					usage();
 				}
 			}
@@ -84,13 +93,6 @@ public class GeneBankCreateBTree {
 	public static void createTree(boolean cache, int degree, File file, int sequenceLength, int cacheSize, int debug) {
 		try {
 					Scanner scanFile = new Scanner(file);
-					//TODO:
-					// BTree btree = new BTree(degree, sequenceLength, file);
-					// DataManagement file = new DataManagement()
-					// File f = btree.getFile()
-					// file.write(f) -> maybe?
-					// all the TestBinaryConverter code lives here
-					
 					Scanner fileScan = null;
 					//int z = 0;
 					try {
