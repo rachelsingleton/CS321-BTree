@@ -26,10 +26,6 @@ public class GeneBankCreateBTree {
 				usage();
 			}
 
-			if (args[0].equals(1)) {
-				cache = true;
-			}
-
 			// Todo: logic dealing with degree
 			int degree = Integer.parseInt(args[1]);
 			if (degree < 0 || degree > 127) {
