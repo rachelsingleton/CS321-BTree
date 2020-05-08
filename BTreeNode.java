@@ -174,10 +174,14 @@ public class BTreeNode {
     /*
     Returns the specified key from inside a node
      */
-    public long getKey(int i) {
+    public String getKey(int i,int seqLen) {
         TreeObject temp = node.get(i);
         long substring = temp.getSequence();
-        return substring;
+        String actual = Long.toBinaryString(substring);
+        while(actual.length() < seqLen*2) {
+            actual = "0" + actual;
+        }
+        return actual;
     }
 
     /*

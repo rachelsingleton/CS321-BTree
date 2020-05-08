@@ -1,7 +1,7 @@
 public class TreeObject {
 
 	// Instance Variables
-	private long key;
+	private long keyValue;
 	private int frequency;
 
 	// Constructor
@@ -10,7 +10,7 @@ public class TreeObject {
 	 * Frequency always starts at 1
 	 */
 	public TreeObject(long substring) {
-		key = substring;
+		keyValue = substring;
 		frequency = 1;
 	}
 
@@ -36,7 +36,7 @@ public class TreeObject {
 	 * Returns the key (aka gene substring)
 	 */
 	public long getSequence() {
-		return key;
+		return keyValue;
 	}
 
 	/*
@@ -45,7 +45,7 @@ public class TreeObject {
 	 */
 	public String toString() {
 
-		String data = Long.toString(key, 2);
+		String data = Long.toString(keyValue, 2);
 
 		if (data.length() % 2 != 0 && data.charAt(0) == '0') {
 			data = data.replaceFirst("0", "A");

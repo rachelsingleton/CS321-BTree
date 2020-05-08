@@ -17,7 +17,7 @@ public class DataManagement {
         currentNodeLoc = 0;
         treeFile = file;
         readNode = new BTreeNode(degree);
-        arrayLength = 0;
+        arrayLength = (32*degree) + 20;
     }
 
     
@@ -31,7 +31,6 @@ public class DataManagement {
             currentNodeLoc = node.getLocation();
             try {
                 byte[] bytes = arrayFiller(node);
-                arrayLength = bytes.length;
                 treeFile.seek(currentNodeLoc);
                 treeFile.write(bytes);
 
@@ -44,17 +43,17 @@ public class DataManagement {
     Returns the current root
     Binary file should be storing this location/node as metadata as the first 4 ints
      */
-    public BTreeNode getRoot() {
-        BTreeNode root = null;
-        try {
-            treeFile.seek(0);
-            int loc = treeFile.readInt();
-            root = readNode(loc);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return root;
-    }
+//    public BTreeNode getRoot() {
+//        BTreeNode root = null;
+//        try {
+//            treeFile.seek(0);
+//            int loc = treeFile.readInt();
+//            root = readNode(loc);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return root;
+//    }
 
     /*
     Pass in the specified location and it returns the node
@@ -71,7 +70,8 @@ public class DataManagement {
             bb.rewind();
             readNode.setRoot(bb.getInt());
             readNode.setLeafOverload(bb.getInt());
-            readNode.setKeys(bb.getInt());
+            int numO = bb.getInt();
+            readNode.setKeys(numO);
             int numC = bb.getInt();
             readNode.setNumChildren(numC);
             readNode.setParentLoc(bb.getInt());
@@ -83,7 +83,7 @@ public class DataManagement {
             readNode.setLocation(bb.getInt());
             readNode.setDegree(bb.getInt());
             int i = 0;
-            while (i < numC-1) {
+            while (i < numO) {
                 TreeObject ob = new TreeObject(bb.getLong());
                 ob.setFrequency(bb.getInt());
                 readNode.setObject(i, ob);
@@ -122,8 +122,9 @@ public class DataManagement {
             bb.putInt(nodeTemp.get(i).getFrequency());
         }
         System.out.println(bb);
-        
-        for(int i = 0; i < bb.remaining()/4; i++) {
+
+        int remain = bb.remaining()/4;
+        for(int i = 0; i < remain; i++) {
         	bb.putInt(0);
         }
         return bb.array();

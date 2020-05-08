@@ -8,6 +8,7 @@ public class GeneBankSearch {
 
 	static int degree = 0;
 	static DataManagement filewriter = null;
+	static int sequenceLength = 0;
 
 	// TODO: do file parsing, binary conversion, and call searchBTree() in this
 	// class
@@ -21,7 +22,6 @@ public class GeneBankSearch {
 	public static void main(String[] args) {
 		File btreeFile = null;
 		File queryFile = null;
-		int sequenceLength = 0;
 		int querySeqLen = 0;
 		int btreeSeqLen = 0;
 		boolean cache = false;
@@ -142,16 +142,19 @@ public class GeneBankSearch {
 	/*
 	 * Searches the given BTree file for a given key from a query file
 	 */
-	// TODO: What should this return? - logic is done except for return statement
 	// stuff
 	public static void searchBTree(Long data, int root, RandomAccessFile btreeFile) {
 		BTreeNode treeRoot = filewriter.readNode(root);
+		String actual = Long.toBinaryString(data);
+		while(actual.length() < sequenceLength*2) {
+			actual = "0" + actual;
+		}
 		int i = 1;
-		while (i <= treeRoot.numKeys() && (data > treeRoot.getKey(i - 1))) {
+		while (i <= treeRoot.numKeys() && (actual.compareTo(treeRoot.getKey(i - 1,sequenceLength)) > 0)) {
 			i++;
 		}
-		if (i <= treeRoot.numKeys() && (data == treeRoot.getKey(i - 1))) {
-			System.out.println(treeRoot.getObject(i - 1).toString() + ": " + treeRoot.getObject(i - 1).getFrequency());
+		if (i <= treeRoot.numKeys() && actual.compareTo(treeRoot.getKey(i-1,sequenceLength)) ==0) {
+			System.out.println(DecodeToString(treeRoot.getObject(i-1).getSequence()) + ": " + treeRoot.getObject(i - 1).getFrequency());
 		} else if (treeRoot.leaf()) {
 			System.out.println(DecodeToString(data) + ": 0");
 		} else {
@@ -161,8 +164,10 @@ public class GeneBankSearch {
 	}
 
 	public static String DecodeToString(long key) {
-
-		String data = Long.toString(key, 2);
+		String data = Long.toBinaryString(key);
+		while(data.length() < sequenceLength*2) {
+			data = "0" + data;
+		}
 
 		if (data.length() % 2 != 0 && data.charAt(0) == '0') {
 			data = data.replaceFirst("0", "A");

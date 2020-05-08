@@ -7,12 +7,12 @@ public class BTree<T> {
     private BTreeNode root;
     private int rootLoc;
     private int treeDegree;
-    private int seqLen;
+    public int seqLen;
     private File btree;
     private File btreeMetaData;
     private String binaryFile;
     private int numNodes;
-    int currentNodeLoc = 0;
+//    int currentNodeLoc = 0;
     private RandomAccessFile btreeRA;
     private DataManagement filewriter;
     
@@ -140,15 +140,24 @@ public class BTree<T> {
     public void insertKey(Long data) {
         System.out.println("Inserting...");
     	TreeObject newObject = new TreeObject(data);
-        BTreeNode r = filewriter.getRoot(); //Needs to return a BTreeNode, not an int
-        if(r.numKeys() == (2*treeDegree)+1) {
+        BTreeNode r = root; //Needs to return a BTreeNode, not an int
+        if(r.numKeys() == (2*treeDegree)-1) {
             BTreeNode s = new BTreeNode(treeDegree);
+            s.setLocation(allocateSpace(numNodes)+4);
             numNodes++;
-            s.setLocation(allocateSpace(numNodes));
             s.setRoot(0); // New root
+            r.setRoot(1);
             rootLoc = s.getLocation();
+            try {
+                // The first root location should be at index 0 in the binary file
+                btreeRA.seek(0);
+                btreeRA.writeInt(rootLoc);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             s.setChild(0,r); //Sets the root to be the new child (at index 0)
             r.setParent(s); //Sets the new root to be the parent of the old root
+            filewriter.writeNode(r);
             s.setLeaf(); //Sets the leaf status of the new node
             splitChildNode(s, 0); //Splitting child 0 of the new root node
             insertNonFull(s, newObject);
@@ -165,12 +174,16 @@ public class BTree<T> {
     private void insertNonFull(BTreeNode x, TreeObject k) {
         int i = x.numKeys() - 1; //total number of keys
         long key = k.getSequence();
+        String actual = Long.toBinaryString(key);
+        while(actual.length() < seqLen*2) {
+            actual = "0" + actual;
+        }
         if(x.leaf()) {
-            while((i >= 0) && (key < x.getKey(i))) { //getting substring from last object (index is one less)
+            while((i >= 0) && actual.compareTo(x.getKey(i,seqLen)) < 0) { //getting substring from last object (index is one less)
                 x.setObject(i+1,x.getObject(i));
                 i--;
             }
-            if(i >= 0 && k.getSequence() == x.getKey(i)) {
+            if(i >= 0 && actual.compareTo(x.getKey(i,seqLen))==0) {
                 System.out.println("The object you are trying to insert is a duplicate.");
                 k.incrementFreq();
             } else {
@@ -180,10 +193,10 @@ public class BTree<T> {
                 System.out.println("Done inserting..." + x.numKeys() + " objects");
             }
         } else {
-            while((i >= 0) && (key < x.getKey(i-1))) {
+            while((i >= 0) && actual.compareTo(x.getKey(i-1,seqLen)) < 0) {
                 i--;
             }
-            if(i >= 0 && k.getSequence() == x.getKey(i)) {
+            if(actual.compareTo(x.getKey(i,seqLen))==0) {
                 System.out.println("The object you are trying to insert is a duplicate.");
                 k.incrementFreq();
             } else {
@@ -191,7 +204,7 @@ public class BTree<T> {
 	            BTreeNode child = x.getChild(i,btreeRA);
 	            if(child.numKeys() == (2*treeDegree)-1) {
 	                splitChildNode(x,i);
-	                if(key > x.getKey(i)) {
+	                if(actual.compareTo(x.getKey(i,seqLen)) > 0) {
 	                    i++;
 	                }
 	            }
@@ -206,15 +219,15 @@ public class BTree<T> {
      */
     private void splitChildNode(BTreeNode x, int i) {
         BTreeNode z = new BTreeNode(treeDegree);
+        z.setLocation(allocateSpace(numNodes)+4);
         numNodes++;
-        z.setLocation(allocateSpace(numNodes));
         z.setParent(x);
         BTreeNode y = x.getChild(i,btreeRA); //logic in getChild(i) grabs the correct index
         if(y.leaf()) {
             z.setLeaf();
         }
         z.setKeys(treeDegree - 1);
-        for(int j=0; j < (treeDegree);j++) {
+        for(int j=0; j < (treeDegree)-1;j++) {
             z.setObject(j,y.getObject(j+treeDegree));
         }
         if(!y.leaf()) {
@@ -226,7 +239,7 @@ public class BTree<T> {
         for(int j=x.numKeys(); j > i;j--) {
             x.setChild(j+1,x.getChild(j,btreeRA));
         }
-        x.setChild(i+1,z);
+        x.setChild(i,z);
         for(int j=x.numKeys()-1;j > i-1;j--) {
             x.setObject(j+1,x.getObject(j));
         }
@@ -236,26 +249,6 @@ public class BTree<T> {
         filewriter.writeNode(z);
         filewriter.writeNode(x);
     }
-
-    /*
-    Searches the given BTree file for a given key from a query file
-     */
-    //TODO: What should this return? - logic is done except for return statement stuff
-    public void searchBTree(Long data,BTreeNode treeRoot,RandomAccessFile btreeFile) {
-        int i = 1;
-        while(i <= treeRoot.numKeys() && (data > treeRoot.getKey(i-1))) {
-            i++;
-        }
-        if(i <= treeRoot.numKeys() && (data == treeRoot.getKey(i-1))) {
-            //TODO: What do we want to return here?
-        } else if(treeRoot.leaf()) {
-            //TODO: What do we want to return if it hasn't been found?
-        } else {
-            BTreeNode child = treeRoot.getChild(i,btreeFile);
-            searchBTree(data,child,btreeFile);
-        }
-    }
-
 
     //DumpFile Method 
     //Ex. test3.gbk.btree.dump.6
