@@ -272,25 +272,7 @@ public class BTree<T> {
 //    	
 //    	
 //    }
-//    
-    public void writeNode(BTreeNode node) {
-        currentNodeLoc = node.getLocation();
-        try {
-            btreeRA.seek(currentNodeLoc);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public BTreeNode getRoot() {
-        return null;
-    }
-
-    public BTreeNode readNode() {
-
-        return null;
-    }
+//
 
     //DumpFile Method 
    // Ex. test3.gbk.btree.dump.6
@@ -313,7 +295,7 @@ public class BTree<T> {
         for ( i = 0; i < node.getNumKeys(); i++) {
 
             if(node.leaf() == false) {
-                int childPointer = node.getChild(i);
+//                int childPointer = node.getChild(i);
             }
 
         }
