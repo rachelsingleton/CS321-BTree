@@ -1,20 +1,21 @@
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 
 public class BTree<T> {
     private BTreeNode root;
-    private int rootLoc;
     private int treeDegree;
-    public int seqLen;
+    private int seqLen;
+    private int isRoot;
     private File btree;
     private File btreeMetaData;
     private String binaryFile;
     private int numNodes;
-//    int currentNodeLoc = 0;
+    int currentNodeLoc = 0;
     private RandomAccessFile btreeRA;
-    private DataManagement filewriter;
     
 
     /* Constructor
@@ -67,7 +68,7 @@ public class BTree<T> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        filewriter = new DataManagement(btreeRA,treeDegree);
+
         createBTree();
     }
 
@@ -77,19 +78,11 @@ public class BTree<T> {
     Called in the constructor
      */
     public BTreeNode createBTree() {
-        root = new BTreeNode(treeDegree);
-        root.setLocation(4);
+        root = new BTreeNode();
+        root.setLocation(0);
         root.setRoot(0);
-        rootLoc = 4;
         root.setLeaf();
-        try {
-            // The first root location should be at index 0 in the binary file
-            btreeRA.seek(0);
-            btreeRA.writeInt(rootLoc);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        filewriter.writeNode(root);
+        writeNode(root);
         this.numNodes = 1;
         return root;
     }
@@ -99,7 +92,7 @@ public class BTree<T> {
     Does not write to the file or add a new node. All it does is the math
      */
     public int allocateSpace(int numberOfNodes) {
-        int loc = numberOfNodes * ((32*treeDegree) + 20);
+        int loc = numberOfNodes * ((32*treeDegree) + 9);
         return loc;
     }
 
@@ -128,38 +121,23 @@ public class BTree<T> {
         return btreeMetaData;
     }
 
-    public int getRootLoc() {
-        return rootLoc;
-    }
-
     /*
-    Inserts an the subsequence of type long into the BTree
+    Inserts the subsequence of type long into the BTree
     Calls upon other methods in this class - this just checks to see if we are full or not-full
     Inserting the sequence versus object to help with logic. We create the tree object after we try to insert.
      */
     public void insertKey(Long data) {
-        System.out.println("Inserting...");
     	TreeObject newObject = new TreeObject(data);
-        BTreeNode r = root; //Needs to return a BTreeNode, not an int
-        if(r.getNumKeys() == (2*treeDegree)-1) {
-            BTreeNode s = new BTreeNode(treeDegree);
-            s.setLocation(allocateSpace(numNodes)+4);
+        BTreeNode r = getRoot(); //Needs to return a BTreeNode, not an int
+        if(r.numKeys() == (2*treeDegree)+1) {
+            BTreeNode s = new BTreeNode();
+            s.setLocation(allocateSpace(numNodes));
             numNodes++;
             s.setRoot(0); // New root
-            r.setRoot(1);
-            rootLoc = s.getLocation();
-            try {
-                // The first root location should be at index 0 in the binary file
-                btreeRA.seek(0);
-                btreeRA.writeInt(rootLoc);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            s.setChild(0,r); //Sets the root to be the new child (at index 0)
+            s.setChild(1,r); //Sets the root to be the new child (at index 0)
             r.setParent(s); //Sets the new root to be the parent of the old root
-            filewriter.writeNode(r);
             s.setLeaf(); //Sets the leaf status of the new node
-            splitChildNode(s, 0); //Splitting child 0 of the new root node
+            splitChildNode(s, 1); //Splitting child 1 of the new root node
             insertNonFull(s, newObject);
         } else {
             insertNonFull(r,newObject);
@@ -172,44 +150,34 @@ public class BTree<T> {
     Likely that the key will not be inserted in node s
      */
     private void insertNonFull(BTreeNode x, TreeObject k) {
-        int i = x.getNumKeys() - 1; //total number of keys
-        long key = k.getSequence();
-        String actual = Long.toBinaryString(key);
-        while(actual.length() < seqLen*2) {
-            actual = "0" + actual;
-        }
+        int i = x.numKeys(); //total number of keys
+        long key = k.getString();
         if(x.leaf()) {
-            while((i >= 0) && actual.compareTo(x.getKey(i,seqLen)) < 0) { //getting substring from last object (index is one less)
-                x.setObject(i+1,x.getObject(i));
+            while((i >= 1) && (key < x.getKey(i-1))) { //getting substring from last object (index is one less)
+                x.setObject(i,x.getObject(i-1));
                 i--;
             }
-            if(i >= 0 && actual.compareTo(x.getKey(i,seqLen))==0) {
+            if(k.getString() == x.getKey(i)) {
                 System.out.println("The object you are trying to insert is a duplicate.");
                 k.incrementFreq();
             } else {
-                x.setObject(i+1,k);
-                x.setKeys(x.getNumKeys()+1);
-                filewriter.writeNode(x);
-                System.out.println("Done inserting..." + x.getNumKeys() + " objects");
+                x.setObject(i,k);
+                x.setKeys(x.numKeys()+1);
+                writeNode(x);
             }
         } else {
-            while((i >= 0) && actual.compareTo(x.getKey(i-1,seqLen)) < 0) {
+            while((i >= 1) && (key < x.getKey(i-1))) {
                 i--;
             }
-            if(actual.compareTo(x.getKey(i,seqLen))==0) {
-                System.out.println("The object you are trying to insert is a duplicate.");
-                k.incrementFreq();
-            } else {
-	            i++;
-	            BTreeNode child = x.getChild(i,btreeRA);
-	            if(child.getNumKeys() == (2*treeDegree)-1) {
-	                splitChildNode(x,i);
-	                if(actual.compareTo(x.getKey(i,seqLen)) > 0) {
-	                    i++;
-	                }
-	            }
-	            insertNonFull(x.getChild(i,btreeRA),k);
+            i++;
+            BTreeNode child = x.getChild(i);
+            if(child.numKeys() == (2*treeDegree)-1) {
+                splitChildNode(x,i-1);
+                if(key > x.getKey(i-1)) {
+                    i++;
+                }
             }
+            insertNonFull(x.getChild(i),k);
         }
     }
 
@@ -218,54 +186,78 @@ public class BTree<T> {
     Passing in child number, not actual index of where the child exists in the array
      */
     private void splitChildNode(BTreeNode x, int i) {
-        BTreeNode z = new BTreeNode(treeDegree);
-        z.setLocation(allocateSpace(numNodes)+4);
-        numNodes++;
+        BTreeNode z = new BTreeNode();
+        z.setLocation(allocateSpace(numNodes));
         z.setParent(x);
-        BTreeNode y = x.getChild(i,btreeRA); //logic in getChild(i) grabs the correct index
+        numNodes++;
+        BTreeNode y = x.getChild(i); //logic in getChild(i) grabs the correct index
         if(y.leaf()) {
             z.setLeaf();
         }
         z.setKeys(treeDegree - 1);
-        for(int j=0; j < (treeDegree)-1;j++) {
-            z.setObject(j,y.getObject(j+treeDegree));
+        for(int j=1; j <= (treeDegree - 1);j++) {
+            z.setObject(j-1,y.getObject(j+treeDegree-1));
         }
         if(!y.leaf()) {
-            for(int j=0; j < treeDegree; j++) {
-                z.setChild(j,y.getChild(j+treeDegree,btreeRA));
+            for(int j=1; j <= treeDegree; j++) {
+                z.setChild(j,y.getChild(j+treeDegree));
             }
         }
         y.setKeys(treeDegree - 1);
-        for(int j=x.getNumKeys(); j > i;j--) {
-            x.setChild(j+1,x.getChild(j,btreeRA));
+        for(int j=x.numKeys()+1; j>i+1;j--) {
+            x.setChild(j+1,x.getChild(j));
         }
-        x.setChild(i,z);
-        for(int j=x.getNumKeys()-1;j > i-1;j--) {
-            x.setObject(j+1,x.getObject(j));
+        x.setChild(i+1,z);
+        for(int j=x.numKeys();j>i;j--) {
+            x.setObject(j,x.getObject(j-1));
         }
-        x.setObject(i,y.getObject(treeDegree-1));
-        x.setKeys(x.getNumKeys()+1);
-        filewriter.writeNode(y);
-        filewriter.writeNode(z);
-        filewriter.writeNode(x);
+        x.setObject(i-1,y.getObject(treeDegree-1));
+        x.setKeys(x.numKeys()+1);
+        writeNode(y);
+        writeNode(z);
+        writeNode(x);
+    }
+
+    public void writeNode(BTreeNode node) {
+        currentNodeLoc = node.getLocation();
+        try {
+            btreeRA.seek(currentNodeLoc);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public BTreeNode getRoot() {
+        return null;
+    }
+
+    public BTreeNode readNode() {
+
+        return null;
     }
 
     //DumpFile Method 
-    //Ex. test3.gbk.btree.dump.6
-//    public void createDumpFile() {
-//     try {
-//		FileWriter dumpFile = new FileWriter("TestDumpFile");
-//	} catch (IOException e) {
-//		System.out.println("Error");
-//		e.printStackTrace();
-//	}
-//    }
-//    
-//    public void printToDumpFile(FileWriter dumpFile, BTreeNode root, int sequenceLength) {
-//    	BTreeNode CurrentNode = root;
-//    	
-//    	
-//    }
-//    
+   // Ex. test3.gbk.btree.dump.6
+    public void createTreeDump(int key) throws IOException {
+        PrintWriter pw = null;
+        try {
+            pw = new PrintWriter("dump");
+        } catch (FileNotFoundException e) {
+            System.out.println("createTreeDump - Error in dump file creation.");
+            e.printStackTrace();
+        }
+        traverseTreeDump(pw, root, key);
+        pw.close();
+    }
+   
+   
+   public void traverseTreeDump(PrintWriter pw, BTreeNode rootNode, int sequenceLength) throws IOException {
+        BTreeNode node = rootNode;
+        int i = 0;
+        for ( i = 0; i < node.get(); i++) {
+
+        }
+    }
 }
 
