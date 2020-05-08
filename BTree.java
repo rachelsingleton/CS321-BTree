@@ -141,7 +141,7 @@ public class BTree<T> {
         System.out.println("Inserting...");
     	TreeObject newObject = new TreeObject(data);
         BTreeNode r = root; //Needs to return a BTreeNode, not an int
-        if(r.numKeys() == (2*treeDegree)-1) {
+        if(r.getNumKeys() == (2*treeDegree)-1) {
             BTreeNode s = new BTreeNode(treeDegree);
             s.setLocation(allocateSpace(numNodes)+4);
             numNodes++;
@@ -172,7 +172,7 @@ public class BTree<T> {
     Likely that the key will not be inserted in node s
      */
     private void insertNonFull(BTreeNode x, TreeObject k) {
-        int i = x.numKeys() - 1; //total number of keys
+        int i = x.getNumKeys() - 1; //total number of keys
         long key = k.getSequence();
         String actual = Long.toBinaryString(key);
         while(actual.length() < seqLen*2) {
@@ -188,9 +188,9 @@ public class BTree<T> {
                 k.incrementFreq();
             } else {
                 x.setObject(i+1,k);
-                x.setKeys(x.numKeys()+1);
+                x.setKeys(x.getNumKeys()+1);
                 filewriter.writeNode(x);
-                System.out.println("Done inserting..." + x.numKeys() + " objects");
+                System.out.println("Done inserting..." + x.getNumKeys() + " objects");
             }
         } else {
             while((i >= 0) && actual.compareTo(x.getKey(i-1,seqLen)) < 0) {
@@ -202,7 +202,7 @@ public class BTree<T> {
             } else {
 	            i++;
 	            BTreeNode child = x.getChild(i,btreeRA);
-	            if(child.numKeys() == (2*treeDegree)-1) {
+	            if(child.getNumKeys() == (2*treeDegree)-1) {
 	                splitChildNode(x,i);
 	                if(actual.compareTo(x.getKey(i,seqLen)) > 0) {
 	                    i++;
@@ -236,15 +236,15 @@ public class BTree<T> {
             }
         }
         y.setKeys(treeDegree - 1);
-        for(int j=x.numKeys(); j > i;j--) {
+        for(int j=x.getNumKeys(); j > i;j--) {
             x.setChild(j+1,x.getChild(j,btreeRA));
         }
         x.setChild(i,z);
-        for(int j=x.numKeys()-1;j > i-1;j--) {
+        for(int j=x.getNumKeys()-1;j > i-1;j--) {
             x.setObject(j+1,x.getObject(j));
         }
         x.setObject(i,y.getObject(treeDegree-1));
-        x.setKeys(x.numKeys()+1);
+        x.setKeys(x.getNumKeys()+1);
         filewriter.writeNode(y);
         filewriter.writeNode(z);
         filewriter.writeNode(x);

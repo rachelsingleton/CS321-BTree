@@ -150,10 +150,10 @@ public class GeneBankSearch {
 			actual = "0" + actual;
 		}
 		int i = 1;
-		while (i <= treeRoot.numKeys() && (actual.compareTo(treeRoot.getKey(i - 1,sequenceLength)) > 0)) {
+		while (i <= treeRoot.getNumKeys() && (actual.compareTo(treeRoot.getKey(i - 1,sequenceLength)) > 0)) {
 			i++;
 		}
-		if (i <= treeRoot.numKeys() && actual.compareTo(treeRoot.getKey(i-1,sequenceLength)) ==0) {
+		if (i <= treeRoot.getNumKeys() && actual.compareTo(treeRoot.getKey(i-1,sequenceLength)) ==0) {
 			System.out.println(DecodeToString(treeRoot.getObject(i-1).getSequence()) + ": " + treeRoot.getObject(i - 1).getFrequency());
 		} else if (treeRoot.leaf()) {
 			System.out.println(DecodeToString(data) + ": 0");

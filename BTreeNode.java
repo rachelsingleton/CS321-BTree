@@ -145,7 +145,7 @@ public class BTreeNode {
     /*
     Returns the number of keys in the node
      */
-    public int numKeys() {
+    public int getNumKeys() {
         return numKeys;
     }
 

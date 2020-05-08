@@ -107,7 +107,7 @@ public class DataManagement {
         } else {
             bb.putInt(1);
         }
-        bb.putInt(node.numKeys());
+        bb.putInt(node.getNumKeys());
         bb.putInt(node.getNumChildren());
         bb.putInt(node.getParent());
         ArrayList<Integer> childrenTemp = node.getChildren();
