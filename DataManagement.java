@@ -32,7 +32,6 @@ public class DataManagement {
             try {
                 byte[] bytes = arrayFiller(node);
                 arrayLength = bytes.length;
-                System.out.println(arrayLength);
                 treeFile.seek(currentNodeLoc);
                 treeFile.write(bytes);
 
@@ -50,7 +49,6 @@ public class DataManagement {
         try {
             treeFile.seek(0);
             int loc = treeFile.readInt();
-            System.out.println(loc);
             root = readNode(loc);
         } catch (IOException e) {
             e.printStackTrace();
@@ -71,7 +69,6 @@ public class DataManagement {
             ByteBuffer bb = ByteBuffer.allocate(arrayLength);
             bb.put(bytes);
             bb.rewind();
-            System.out.println(bb);
             readNode.setRoot(bb.getInt());
             readNode.setLeafOverload(bb.getInt());
             readNode.setKeys(bb.getInt());
@@ -98,13 +95,11 @@ public class DataManagement {
         return readNode;
     }
 
-
     /*
     Creates the array of the data in a node to write it into a binary file
      */
     public byte[] arrayFiller(BTreeNode node) {
-        ByteBuffer bb = ByteBuffer.allocate(node.getNodeSize()+3);
-        System.out.println(node.getNodeSize());
+        ByteBuffer bb = ByteBuffer.allocate(node.getNodeSize());
         bb.putInt(node.getRootInt());
         boolean isLeafTemp = node.leaf();
         if(isLeafTemp) {

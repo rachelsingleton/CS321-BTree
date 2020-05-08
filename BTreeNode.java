@@ -56,7 +56,11 @@ public class BTreeNode {
      */
     public void setChild(int index, BTreeNode r) {
         int loc = r.getLocation();
-        children.add(index,loc);
+        if(index == node.size()){
+            children.add(index, loc);
+        } else {
+            children.set(index, loc);
+        }
         numChildren++;
     }
 
@@ -190,8 +194,11 @@ public class BTreeNode {
     Taking the place of an add method
      */
     public void setObject(int i, TreeObject object) {
-        node.add(i,object);
-        numKeys++;
+        if(i == node.size()){
+            node.add(i, object);
+        } else {
+            node.set(i, object);
+        }
     }
 
     public int getNumChildren() {
@@ -207,7 +214,7 @@ public class BTreeNode {
     }
 
     public int getNodeSize() {
-        return ((32*degree) + 17);
+        return ((32*degree) + 20);
     }
 
     public int getDegree() {

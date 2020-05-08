@@ -99,7 +99,7 @@ public class BTree<T> {
     Does not write to the file or add a new node. All it does is the math
      */
     public int allocateSpace(int numberOfNodes) {
-        int loc = numberOfNodes * ((32*treeDegree) + 17);
+        int loc = numberOfNodes * ((32*treeDegree) + 20);
         return loc;
     }
 
@@ -147,10 +147,10 @@ public class BTree<T> {
             s.setLocation(allocateSpace(numNodes));
             s.setRoot(0); // New root
             rootLoc = s.getLocation();
-            s.setChild(1,r); //Sets the root to be the new child (at index 0)
+            s.setChild(0,r); //Sets the root to be the new child (at index 0)
             r.setParent(s); //Sets the new root to be the parent of the old root
             s.setLeaf(); //Sets the leaf status of the new node
-            splitChildNode(s, 1); //Splitting child 1 of the new root node
+            splitChildNode(s, 0); //Splitting child 0 of the new root node
             insertNonFull(s, newObject);
         } else {
             insertNonFull(r,newObject);
@@ -167,7 +167,7 @@ public class BTree<T> {
         long key = k.getSequence();
         if(x.leaf()) {
             while((i >= 0) && (key < x.getKey(i))) { //getting substring from last object (index is one less)
-                x.setObject(i,x.getObject(i));
+                x.setObject(i+1,x.getObject(i));
                 i--;
             }
             if(i >= 0 && k.getSequence() == x.getKey(i)) {
@@ -176,9 +176,8 @@ public class BTree<T> {
             } else {
                 x.setObject(i+1,k);
                 x.setKeys(x.numKeys()+1);
-                System.out.println("Going to write node to file...");
                 filewriter.writeNode(x);
-                System.out.println("Done inserting...");
+                System.out.println("Done inserting..." + x.numKeys() + " objects");
             }
         } else {
             while((i >= 0) && (key < x.getKey(i-1))) {
