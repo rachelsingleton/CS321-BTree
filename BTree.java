@@ -17,6 +17,7 @@ public class BTree<T> {
 //    int currentNodeLoc = 0;
     private RandomAccessFile btreeRA;
     private DataManagement filewriter;
+    BTreeNode r;
     
 
     /* Constructor
@@ -142,7 +143,7 @@ public class BTree<T> {
     public void insertKey(Long data) {
         System.out.println("Inserting...");
     	TreeObject newObject = new TreeObject(data);
-        BTreeNode r = root; //Needs to return a BTreeNode, not an int
+        r = filewriter.getRoot(); //Needs to return a BTreeNode, not an int
         if(r.getNumKeys() == (2*treeDegree)-1) {
             BTreeNode s = new BTreeNode(treeDegree);
             s.setLocation(allocateSpace(numNodes)+4);
@@ -195,10 +196,10 @@ public class BTree<T> {
                 System.out.println("Done inserting..." + x.getNumKeys() + " objects");
             }
         } else {
-            while((i >= 0) && actual.compareTo(x.getKey(i-1,seqLen)) < 0) {
+            while((i >= 0) && actual.compareTo(x.getKey(i,seqLen)) < 0) {
                 i--;
             }
-            if(actual.compareTo(x.getKey(i,seqLen))==0) {
+            if(i >= 0 && actual.compareTo(x.getKey(i,seqLen))==0) {
                 System.out.println("The object you are trying to insert is a duplicate.");
                 k.incrementFreq();
             } else {
@@ -232,7 +233,7 @@ public class BTree<T> {
         for(int j=0; j < (treeDegree)-1;j++) {
             z.setObject(j,y.getObject(j+treeDegree));
         }
-        for(int p=y.getNode().size()-1; p >= treeDegree;i--) {
+        for(int p=y.getNode().size()-1; p >= treeDegree;p--) {
             y.removeObject(p);
         }
         if(!y.leaf()) {
@@ -248,8 +249,8 @@ public class BTree<T> {
         for(int j=x.getNumKeys()-1;j > i-1;j--) {
             x.setObject(j+1,x.getObject(j));
         }
-        y.removeObject(treeDegree-1);
         x.setObject(i,y.getObject(treeDegree-1));
+        y.removeObject(treeDegree-1);
         x.setKeys(x.getNumKeys()+1);
         filewriter.writeNode(y);
         filewriter.writeNode(z);

@@ -69,7 +69,7 @@ public class BTreeNode {
     }
 
     public void setChildOverload(int index, int value) {
-        children.set(index,value);
+        children.add(index,value);
     }
 
     /*

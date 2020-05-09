@@ -7,8 +7,8 @@ public class DataManagement {
 
     int currentNodeLoc;
     RandomAccessFile treeFile;
-    BTreeNode readNode;
     int arrayLength;
+    int degree;
 
     /*
     Constructor
@@ -16,8 +16,8 @@ public class DataManagement {
     public DataManagement(RandomAccessFile file, int degree) {
         currentNodeLoc = 0;
         treeFile = file;
-        readNode = new BTreeNode(degree);
         arrayLength = (32*degree) + 20;
+        this.degree = degree;
     }
 
     
@@ -43,17 +43,17 @@ public class DataManagement {
     Returns the current root
     Binary file should be storing this location/node as metadata as the first 4 ints
      */
-//    public BTreeNode getRoot() {
-//        BTreeNode root = null;
-//        try {
-//            treeFile.seek(0);
-//            int loc = treeFile.readInt();
-//            root = readNode(loc);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return root;
-//    }
+    public BTreeNode getRoot() {
+        BTreeNode root = null;
+        try {
+            treeFile.seek(0);
+            int loc = treeFile.readInt();
+            root = readNode(loc);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return root;
+    }
 
     /*
     Pass in the specified location and it returns the node
@@ -61,6 +61,7 @@ public class DataManagement {
     Node doesn't exist until we grab it from it's location which is why we pass in an int instead of a node
      */
     public BTreeNode readNode(int location) {
+        BTreeNode readNode = new BTreeNode(degree);
         try {
             byte[] bytes = new byte[arrayLength];
             treeFile.seek(location);
@@ -121,7 +122,6 @@ public class DataManagement {
             bb.putLong(nodeTemp.get(i).getSequence());
             bb.putInt(nodeTemp.get(i).getFrequency());
         }
-        System.out.println(bb);
 
         int remain = bb.remaining()/4;
         for(int i = 0; i < remain; i++) {
