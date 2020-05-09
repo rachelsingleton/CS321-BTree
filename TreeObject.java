@@ -45,25 +45,25 @@ public class TreeObject {
 	 */
 	public String toString() {
 
-		String data = Long.toString(keyValue, 2);
+		String genesBinary = Long.toString(keyValue, 2);
 
-		if (data.length() % 2 != 0 && data.charAt(0) == '0') {
-			data = data.replaceFirst("0", "A");
-		} else if (data.length() % 2 != 0 && data.charAt(0) == '1') {
-			data = data.replaceFirst("1", "C");
+		if (genesBinary.length() % 2 != 0 && genesBinary.charAt(0) == '0') {
+			genesBinary = genesBinary.replaceFirst("0", "A");
+		} else if (genesBinary.length() % 2 != 0 && genesBinary.charAt(0) == '1') {
+			genesBinary = genesBinary.replaceFirst("1", "C");
 		}
 
-		for (int i = 0; i < data.length() - 1; i++) {
-			if (data.charAt(i) == '1' && data.charAt(i + 1) == '1') {
-				data = data.replaceFirst("11", "T");
-			} else if (data.charAt(i) == '1' && data.charAt(i + 1) == '0') {
-				data = data.replaceFirst("10", "G");
-			} else if (data.charAt(i) == '0' && data.charAt(i + 1) == '1') {
-				data = data.replaceFirst("01", "C");
-			} else if (data.charAt(i) == '0' && data.charAt(i + 1) == '0') {
-				data = data.replaceFirst("00", "A");
+		for (int i = 0; i < genesBinary.length() - 1; i++) {
+			if (genesBinary.charAt(i) == '1' && genesBinary.charAt(i + 1) == '1') {
+				genesBinary = genesBinary.replaceFirst("11", "T");
+			} else if (genesBinary.charAt(i) == '1' && genesBinary.charAt(i + 1) == '0') {
+				genesBinary = genesBinary.replaceFirst("10", "G");
+			} else if (genesBinary.charAt(i) == '0' && genesBinary.charAt(i + 1) == '1') {
+				genesBinary = genesBinary.replaceFirst("01", "C");
+			} else if (genesBinary.charAt(i) == '0' && genesBinary.charAt(i + 1) == '0') {
+				genesBinary = genesBinary.replaceFirst("00", "A");
 			}
 		}
-		return data;
+		return genesBinary;
 	}
 }
