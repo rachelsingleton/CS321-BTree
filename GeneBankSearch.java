@@ -10,15 +10,6 @@ public class GeneBankSearch {
 	static DataManagement filewriter = null;
 	static int sequenceLength = 0;
 
-	// TODO: do file parsing, binary conversion, and call searchBTree() in this
-	// class
-	// Will need to pass in the root of the tree to call this method
-	// The root location can be gotten by the getRoot() method in DataManagement or
-	// by reading in the
-	// first integer from the binary file --> this will just give a location and
-	// then you will have to
-	// do other logic to actually get the node (the way you do it depends on if you
-	// want a DataManagement object)
 	public static void main(String[] args) {
 		File btreeFile = null;
 		File queryFile = null;
@@ -34,11 +25,12 @@ public class GeneBankSearch {
 		try {
 			// Checks to make sure we have a valid number of arguments
 			if (args.length < 3 || args.length > 5) {
+				System.out.println("Did not use the right number of arguments.");
 				usage();
 			}
-			// Todo: logic dealing with cache --> what does this mean?
 			// Checks to see if we entered a correct value for cache enabling
 			if (!args[0].equals(1) || !args[0].equals(0)) {
+				System.out.println("Did not give a valid option for the cache.");
 				usage();
 			}
 
@@ -50,6 +42,7 @@ public class GeneBankSearch {
 			// Grabs the btree file
 			btreeFile = new File(args[1]);
 			if (!btreeFile.exists() || !btreeFile.isFile()) {
+				System.out.println("The BTreefile doesn't exist.");
 				usage();
 			}
 			btreeFileName = btreeFile.getName().split("\\.");
@@ -119,9 +112,9 @@ public class GeneBankSearch {
 				queryLine = queryLine.replace("T", "11");
 				queryLine = queryLine.replace("C", "01");
 				queryLine = queryLine.replace("G", "10");
-				long queryBinary = Long.parseLong(queryLine, 2);
+				long queryBinaryLong = Long.parseLong(queryLine, 2);
 
-				searchBTree(queryBinary, root, file);
+				searchBTree(queryBinaryLong, root, file);
 			}
 
 		} catch (Exception e) {
@@ -164,28 +157,28 @@ public class GeneBankSearch {
 	}
 
 	public static String DecodeToString(long key) {
-		String data = Long.toBinaryString(key);
-		while(data.length() < sequenceLength*2) {
-			data = "0" + data;
+		String genesBinary = Long.toBinaryString(key);
+		while(genesBinary.length() < sequenceLength*2) {
+			genesBinary = "0" + genesBinary;
 		}
 
-		if (data.length() % 2 != 0 && data.charAt(0) == '0') {
-			data = data.replaceFirst("0", "A");
-		} else if (data.length() % 2 != 0 && data.charAt(0) == '1') {
-			data = data.replaceFirst("1", "C");
+		if (genesBinary.length() % 2 != 0 && genesBinary.charAt(0) == '0') {
+			genesBinary = genesBinary.replaceFirst("0", "A");
+		} else if (genesBinary.length() % 2 != 0 && genesBinary.charAt(0) == '1') {
+			genesBinary = genesBinary.replaceFirst("1", "C");
 		}
 
-		for (int i = 0; i < data.length() - 1; i++) {
-			if (data.charAt(i) == '1' && data.charAt(i + 1) == '1') {
-				data = data.replaceFirst("11", "T");
-			} else if (data.charAt(i) == '1' && data.charAt(i + 1) == '0') {
-				data = data.replaceFirst("10", "G");
-			} else if (data.charAt(i) == '0' && data.charAt(i + 1) == '1') {
-				data = data.replaceFirst("01", "C");
-			} else if (data.charAt(i) == '0' && data.charAt(i + 1) == '0') {
-				data = data.replaceFirst("00", "A");
+		for (int i = 0; i < genesBinary.length() - 1; i++) {
+			if (genesBinary.charAt(i) == '1' && genesBinary.charAt(i + 1) == '1') {
+				genesBinary = genesBinary.replaceFirst("11", "T");
+			} else if (genesBinary.charAt(i) == '1' && genesBinary.charAt(i + 1) == '0') {
+				genesBinary = genesBinary.replaceFirst("10", "G");
+			} else if (genesBinary.charAt(i) == '0' && genesBinary.charAt(i + 1) == '1') {
+				genesBinary = genesBinary.replaceFirst("01", "C");
+			} else if (genesBinary.charAt(i) == '0' && genesBinary.charAt(i + 1) == '0') {
+				genesBinary = genesBinary.replaceFirst("00", "A");
 			}
 		}
-		return data;
+		return genesBinary;
 	}
 }

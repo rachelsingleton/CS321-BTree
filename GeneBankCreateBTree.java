@@ -11,30 +11,28 @@ public class GeneBankCreateBTree {
 		int cacheSize = 0;
 		int debug = 0;
 
-//usage is:java GeneBankCreateBTree <0/1(no/with Cache)> <degree> <gbk file> <sequence length> [<cache size>] [<debug level>]
 		try {
 			if (args.length < 4 || args.length > 6) {
 				System.out.println("Did not use the right number of arguments.");
 				usage();
 			}
-			// Todo: logic dealing with cache
+			
 			int cacheValue = Integer.parseInt(args[0]);
 			if (cacheValue != 0 && cacheValue != 1) {
 				System.out.println("Did not give a valid option for the cache.");
 				usage();
 			}
+			
 			if (args[0].equals(1)) {
 				cache = true;
 			}
 
-			// Todo: logic dealing with degree
 			int degree = Integer.parseInt(args[1]);
 			if (degree < 0 || degree > 127) {
 				System.out.println("Did not give a valid degree.");
 				usage();
 			}
 			
-			// Todo:Math for ideal degree
 			if (degree == 0) {
 				degree = 127;
 			}
@@ -94,7 +92,7 @@ public class GeneBankCreateBTree {
 		try {
 					Scanner scanFile = new Scanner(file);
 					Scanner fileScan = null;
-					//int z = 0;
+
 					try {
 						fileScan = new Scanner(file);
 					} catch (FileNotFoundException e1) {
@@ -106,22 +104,18 @@ public class GeneBankCreateBTree {
 					tree = new BTree<Long>(degree ,sequenceLength, file.getName());
 					
 					
-					StringBuilder str = new StringBuilder();
+					StringBuilder stringBuilder = new StringBuilder();
 					while (fileScan.hasNextLine()) {
 						String line = fileScan.nextLine();
 						line = line.toUpperCase();	
 						if(read) {
-							Scanner lineScan = new Scanner(line);
-							if(lineScan.hasNext() && lineScan.next().equals("//")) {
+							Scanner scanLine = new Scanner(line);
+							if(scanLine.hasNext() && scanLine.next().equals("//")) {
 								read = false;
 
-									String currentSection = str.toString();
+									String currentSection = stringBuilder.toString();
 									currentSection = currentSection.replace("N", "");
 
-//								System.out.println(str.length() + " Section Length w/ n" );
-//								System.out.println(currentSection.length() + " Section Length w/o n");
-//								System.out.println();
-								
 								for (int j = 0; j < currentSection.length() - sequenceLength + 1; j++) {
 									String dna = currentSection.substring(j, j + sequenceLength);
 									
@@ -129,28 +123,25 @@ public class GeneBankCreateBTree {
 										dna = dna.replace("T", "11");
 										dna = dna.replace("C", "01");
 										dna = dna.replace("G", "10");
-										
-										//z++;
-										//System.out.println(dna + " " + z);
-										
+
 										long genesBinary = Long.parseLong(dna,2);
 										tree.insertKey(genesBinary);
 
 								}
-								str = new StringBuilder();
+								stringBuilder = new StringBuilder();
 							} else {
-								while(lineScan.hasNext()) {
-									str.append(lineScan.next());
+								while(scanLine.hasNext()) {
+									stringBuilder.append(scanLine.next());
 								}
 							}
 							
-							lineScan.close();
+							scanLine.close();
 						} else {
-							Scanner lineScan = new Scanner(line);
-							if(lineScan.hasNext() && lineScan.next().equals("ORIGIN")) {
+							Scanner scanLine = new Scanner(line);
+							if(scanLine.hasNext() && scanLine.next().equals("ORIGIN")) {
 								read = true;
 							}
-							lineScan.close();
+							scanLine.close();
 						}
 					}
 					fileScan.close();
