@@ -33,8 +33,9 @@ We were not able to successfully implement: any cache functionality, dump file c
 capability from geneBankSearch. Many problems arose from miscommunications, work (and loss of) and a general inability to access resources that would have
 been available to us if we had not been forced to access our classes remotely (tutoring centers, in-person LA meetings, etc.).
 
-We were able to complete a modicum of functionality from geneBankCreateBTree that successfully created a binary file with the correct amount of sequences converted
-correctly. 
+We started creating our geneBankCreateBTree class with an express purpose of converting the sequences to their correct binary representation. We made a tester to test the output
+via the command line and were able to successfully validate the correct the converted sequences ignoring any superflous data or characters. Once that was complete, my group agreed
+that we should send that next step would be to pass that converted long value into the Btree insertKey() class. 
 
 #### Cache Size Observations:
 
