@@ -3,6 +3,8 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 
 public class BTreeNode {
+
+    // Instance Variables
     private int root;
     private boolean isLeaf;
     private int numKeys;
@@ -42,8 +44,6 @@ public class BTreeNode {
 
     /*
     Returns a specified child from the node (returns the actual node, not location in file)
-    Put in child number you want but since we are indexing, we have to subtract 1
-    Ex: Child 1 is at index 0 in the list
      */
     public BTreeNode getChild(int index, RandomAccessFile file) {
         int val = children.get(index);
@@ -52,11 +52,8 @@ public class BTreeNode {
     }
 
     /*
-    Sets the specified child to the location of the specified node
-    Ex: want to set child 2 to be node r so setChild(2,r)
     Always increases the number of children since add method does the shifting
     first line: gets the int location of the node in the file since the array stores pointers, not nodes
-    Does index conversion in the method
      */
     public void setChild(int index, BTreeNode r) {
         int loc = r.getLocation();
@@ -69,6 +66,9 @@ public class BTreeNode {
 
     }
 
+    /*
+    Used for reading files
+     */
     public void setChildOverload(int index, int value) {
         children.add(index,value);
     }
@@ -87,6 +87,9 @@ public class BTreeNode {
         return parentloc;
     }
 
+    /*
+    Sets the location of the parent for a node
+     */
     public void setParentLoc(int value) {
         parentloc = value;
     }
@@ -135,6 +138,9 @@ public class BTreeNode {
         return isLeaf;
     }
 
+    /*
+    Used for reading files
+     */
     public void setLeafOverload(int val){
         if(val==0) {
             isLeaf = true;
@@ -143,6 +149,9 @@ public class BTreeNode {
         }
     }
 
+    /*
+    Sets the number of children for a node
+     */
     public void setNumChildren(int value) {
         numChildren = value;
     }
@@ -211,26 +220,44 @@ public class BTreeNode {
         }
     }
 
+    /*
+    Returns the number of children for a node
+     */
     public int getNumChildren() {
         return numChildren;
     }
 
+    /*
+    Returns the ArrayList of TreeObjects
+     */
     public ArrayList getNode() {
         return node;
     }
 
+    /*
+    Used with reading files
+     */
     public int getRootInt() {
         return root;
     }
 
+    /*
+    Calculates the maximum size of a node based on the degree t
+     */
     public int getNodeSize() {
         return ((32*degree) + 20);
     }
 
+    /*
+    Returns the degree of a node
+     */
     public int getDegree() {
         return degree;
     }
 
+    /*
+    Sets the degree of a node - used with reading files
+     */
     public void setDegree(int value) {
         degree = value;
     }

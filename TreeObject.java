@@ -28,6 +28,9 @@ public class TreeObject {
 		return frequency;
 	}
 
+	/*
+	Sets the frequency of a specific sequence to the specified value
+	 */
 	public void setFrequency(int value) {
 		frequency = value;
 	}

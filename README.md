@@ -1,5 +1,5 @@
 ### CS-321 Project Four: BTree
-#### Rachel Singleton, Zachary Sherwood, Jacob Uzabel, Michael Smith
+#### Rachel Singleton, Zachary Sherwood, Jacob Uzabel
 #### Professor: Dr. Yeh
 
 #### Layout of BTree:
@@ -24,20 +24,18 @@ Cache size and debug level are optional arguments for both driver classes.
 
 #### Layout of the BTree on the disk:
 We chose to design our BTree like the following:
+The only metadata that was written to the binary file was the location of the current root node (an integer taking up 4 bytes). After that, we had nodes being written end to end with all the metadata being written first using a byte buffer and the TreeObjects being written last. The maximum amount of space a node would take up if it was full was 32t+20 bytes which is what we allocated everytime a new node was created. When we wrote things to the file, we chose to add everything into an array and then write the whole array versus writing each part separately. 
 
 
 #### Issues we ran into:
-This project came at a difficult time for everyone in our group. Not only did we have one group member (Rachel Singleton) who was forced
-to move back to Seattle, Washington late-semester. We also had one member (Michael Smith) who contracted some illness and was not able to contribute anything to the project.
-We were not able to successfully implement: any cache functionality, dump file creation of a specified sequence and frequency, and any search
-capability from geneBankSearch. Many problems arose from miscommunications, work (and loss of) and a general inability to access resources that would have
-been available to us if we had not been forced to access our classes remotely (tutoring centers, in-person LA meetings, etc.).
+In terms of team issues, this was very difficult to do remotely as it was harder to get ahold of everyone. One of us moved back home in the middle and another one of us got extremely ill and was unable to contribute anything. 
 
-We started creating our geneBankCreateBTree class with an express purpose of converting the sequences to their correct binary representation. We made a tester to test the output
-via the command line and were able to successfully validate the correct the converted sequences ignoring any superflous data or characters. Once that was complete, my group agreed
-that we should send that next step would be to pass that converted long value into the Btree insertKey() class. 
+In terms of design issues, it wasn't until it was too late that we realized our implementation of a BTreeNode with an ArrayList of TreeObjects would not work. We spent close to 20 hours during the last few days of finals week trying to get it to work and sadly it was to no avail. There is a pesky index out of bounds error that we could not fix. To fix it, we would have had to rewrite the entire program and unfortunately, we had no more time. Due to this, we were not able to successfully implement: any cache functionality, dump file creation of a specified sequence and frequency, or any search capability from geneBankSearch. 
+
+Other design issues we ran into was allowing methods to access the RandomAccessFile when they weren't in the class with it, making sure that we were writing the node to the correct place and reading all of the parts back in, using the ArrayList with indexing, and splitting a node that had a parent. Our process had been to create the GeneBankCreateBTree class so that we could get the correct binary strings to pass into our program. To do that, we created a tester class and through that, we were able to successfully validate the correct converted sequences while ignoring any superfluos data or characters. During that time, we also implemented BTree, BTreeNode, and TreeObject. Lastly, we tried to create the DataManagement class that would read and write things to a node. Looking back on it, we probably should have done this in conjunction with the other implementations because then they would have been able to work more fluidly together and there would have been less bugs. 
 
 #### Cache Size Observations:
+No Cache implementation was created. 
 
 #### Math to figure out the optimal degree for our BTree:
 * metadata for 1 BTreeNode = 17 bytes

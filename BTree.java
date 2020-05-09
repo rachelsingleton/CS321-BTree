@@ -30,7 +30,6 @@ public class BTree<T> {
 
 		this.treeDegree = degree;
 		this.seqLen = sequenceLength;
-		
 		//Creates a file for storing the metadata of the BTree class
         try {
             btreeMetaData = new File(gbkFileName + ".btree.metadata." + seqLen + "." + treeDegree + ".");
@@ -46,8 +45,6 @@ public class BTree<T> {
             System.out.println("The metadata file could not be created.");
             e.printStackTrace();
         }
-
-
         // Creates the binary data file that all the node information is stored in
         try {
             btree = new File(gbkFileName + ".btree.data." + seqLen + "." + treeDegree + ".");
@@ -65,6 +62,7 @@ public class BTree<T> {
         }
 
 		this.binaryFile = btree.getName();
+        // Creates the random access file
         try {
             btreeRA = new RandomAccessFile(binaryFile,"rw");
         } catch (IOException e) {
@@ -127,10 +125,16 @@ public class BTree<T> {
         return binaryFile;
     }
 
+    /*
+    Returns the file with the metadata
+     */
     public File getMetaDataFile() {
         return btreeMetaData;
     }
 
+    /*
+    Returns the location of the current root
+     */
     public int getRootLoc() {
         return rootLoc;
     }
@@ -256,24 +260,6 @@ public class BTree<T> {
         filewriter.writeNode(z);
         filewriter.writeNode(x);
     }
-
-    //DumpFile Method 
-    //Ex. test3.gbk.btree.dump.6
-//    public void createDumpFile() {
-//     try {
-//		FileWriter dumpFile = new FileWriter("TestDumpFile");
-//	} catch (IOException e) {
-//		System.out.println("Error");
-//		e.printStackTrace();
-//	}
-//    }
-//    
-//    public void printToDumpFile(FileWriter dumpFile, BTreeNode root, int sequenceLength) {
-//    	BTreeNode CurrentNode = root;
-//    	
-//    	
-//    }
-//
 
     //DumpFile Method 
    // Ex. test3.gbk.btree.dump.6

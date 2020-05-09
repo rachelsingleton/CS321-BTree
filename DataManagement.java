@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 public class DataManagement {
 
+    // Instance Variables
     int currentNodeLoc;
     RandomAccessFile treeFile;
     int arrayLength;
@@ -22,7 +23,7 @@ public class DataManagement {
 
     
     /*
-    Every 32t+9 is the max amount of room a node would need where t is the tree degree
+    Every 32t+20 is the max amount of room a node would need where t is the tree degree
 	Physically writes the byte buffer array to the file
 	The byte buffer array contains all information about one specific node
 	Location that is written to is the byte where space was allocated for the node
