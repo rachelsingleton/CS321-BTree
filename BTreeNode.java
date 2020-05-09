@@ -60,12 +60,13 @@ public class BTreeNode {
      */
     public void setChild(int index, BTreeNode r) {
         int loc = r.getLocation();
-        if(index == node.size()){
+        if(index == children.size()){
             children.add(index, loc);
+            numChildren++;
         } else {
             children.set(index, loc);
         }
-        numChildren++;
+
     }
 
     public void setChildOverload(int index, int value) {
@@ -204,6 +205,7 @@ public class BTreeNode {
     public void setObject(int i, TreeObject object) {
         if(i == node.size()){
             node.add(i, object);
+            numKeys++;
         } else {
             node.set(i, object);
         }

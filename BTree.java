@@ -188,10 +188,10 @@ public class BTree<T> {
             }
             if(i >= 0 && actual.compareTo(x.getKey(i,seqLen))==0) {
                 System.out.println("The object you are trying to insert is a duplicate.");
-                k.incrementFreq();
+                x.getObject(i).incrementFreq();
+                filewriter.writeNode(x);
             } else {
                 x.setObject(i+1,k);
-                x.setKeys(x.getNumKeys()+1);
                 filewriter.writeNode(x);
                 System.out.println("Done inserting..." + x.getNumKeys() + " objects");
             }
@@ -201,7 +201,8 @@ public class BTree<T> {
             }
             if(i >= 0 && actual.compareTo(x.getKey(i,seqLen))==0) {
                 System.out.println("The object you are trying to insert is a duplicate.");
-                k.incrementFreq();
+                x.getObject(i).incrementFreq();
+                filewriter.writeNode(x);
             } else {
 	            i++;
 	            BTreeNode child = x.getChild(i,btreeRA);
@@ -251,7 +252,6 @@ public class BTree<T> {
         }
         x.setObject(i,y.getObject(treeDegree-1));
         y.removeObject(treeDegree-1);
-        x.setKeys(x.getNumKeys()+1);
         filewriter.writeNode(y);
         filewriter.writeNode(z);
         filewriter.writeNode(x);
